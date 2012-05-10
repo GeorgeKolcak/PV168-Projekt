@@ -23,7 +23,7 @@ public class RentlManagerTest {
 
     private CarManagerImplementation carManager;
     private CustomerManagerImplementation customerManager;
-    private RentlManagerImplementation manager;
+    private RentManagerImplementation manager;
     private DataSource dataSource;
     private Car car1;
     private Car car2;
@@ -68,7 +68,7 @@ public class RentlManagerTest {
     public void setUp() throws SQLException {
         dataSource = prepareDataSource();
         DBUtils.createTables(dataSource);
-        manager = new RentlManagerImplementation();
+        manager = new RentManagerImplementation();
         manager.setDataSource(dataSource);
         carManager = new CarManagerImplementation();
         carManager.setDataSource(dataSource);
@@ -106,7 +106,6 @@ public class RentlManagerTest {
             fail();
         } catch (IllegalArgumentException e) {
         }
-
         try {
             manager.findCustomerWithCar(carWithoutID);
             fail();
@@ -317,14 +316,14 @@ public class RentlManagerTest {
         assertTrue(car3.getAvailable());
     }
 
-    private static Rent newCarInventory(long carId, long customerId, Date rentDate, Date dueDate) {
-        Rent inventory = new Rent();
+    private static Rent newRent(long carId, long customerId, Date rentDate, Date dueDate) {
+        Rent rent = new Rent();
 
-        inventory.setCarID(carId);
-        inventory.setCustomerID(customerId);
-        inventory.setRentDate(rentDate);
-        inventory.setDueDate(dueDate);
+        rent.setCarID(carId);
+        rent.setCustomerID(customerId);
+        rent.setRentDate(rentDate);
+        rent.setDueDate(dueDate);
 
-        return inventory;
+        return rent;
     }
 }

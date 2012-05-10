@@ -5,7 +5,7 @@ import java.sql.Date;
 import java.util.List;
 import javax.sql.DataSource;
 
-public interface RentlManager {
+public interface RentManager {
 
     public Customer findCustomerWithCar(Car car) throws IllegalArgumentException, TransactionException;
 
@@ -15,7 +15,11 @@ public interface RentlManager {
 
     public void getCarFromCustomer(Car car, Customer customer) throws IllegalArgumentException, TransactionException;
 
+    public Rent findRentWithCar(Car car) throws IllegalArgumentException, TransactionException;
+
+    public List<Rent> getAllRents() throws IllegalArgumentException, TransactionException;
+
     public void setDataSource(DataSource ds);
-    
+
     public void setLogger(FileOutputStream fs);
 }

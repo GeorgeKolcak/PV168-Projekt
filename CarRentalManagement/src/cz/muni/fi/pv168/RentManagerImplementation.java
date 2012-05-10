@@ -10,7 +10,7 @@ import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 import javax.sql.DataSource;
 
-public class RentlManagerImplementation implements RentlManager {
+public class RentManagerImplementation implements RentManager {
 
     @Override
     public Customer findCustomerWithCar(Car car) throws IllegalArgumentException, TransactionException {
@@ -27,7 +27,7 @@ public class RentlManagerImplementation implements RentlManager {
         PreparedStatement statement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.prepareStatement("SELECT customer FROM INVENTORIES WHERE car=?");
+            statement = connection.prepareStatement("SELECT customer FROM RENTS WHERE car=?");
             statement.setLong(1, car.getID());
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -48,6 +48,63 @@ public class RentlManagerImplementation implements RentlManager {
     }
 
     @Override
+    public Rent findRentWithCar(Car car) throws IllegalArgumentException, TransactionException {
+        if (null == car) {
+            throw new IllegalArgumentException("Can't find Car with NULL pointer");
+        }
+        if (null == car.getID()) {
+            throw new IllegalArgumentException("Can't find Car with NULL ID");
+        }
+        if (car.getAvailable()) {
+            throw new IllegalArgumentException("Car is NOT RENTED");
+        }
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement("SELECT id, car, customer, rent_date, due_date FROM RENTS WHERE car=?");
+            statement.setLong(1, car.getID());
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                Rent result = getRentFromResultSet(resultSet);
+                if (resultSet.next()) {
+                    throw new IllegalArgumentException("Multiple Rents with same Car");
+                }
+                return result;
+            } else {
+                return null;
+            }
+        } catch (SQLException ex) {
+            logger.log(Level.SEVERE, "Error when getting rent from DB", ex);
+            throw new TransactionException("Error when getting rent from DB", ex);
+        } finally {
+            DBUtils.closeQuietly(connection);
+        }
+    }
+
+    @Override
+    public List<Rent> getAllRents() throws IllegalArgumentException, TransactionException {
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement("SELECT * FROM RENTS");
+            ResultSet resultSet = statement.executeQuery();
+            List<Rent> allRents = new ArrayList<>();
+            while (resultSet.next()) {
+                allRents.add(getRentFromResultSet(resultSet));
+            }
+            return allRents;
+
+        } catch (SQLException ex) {
+            logger.log(Level.SEVERE, "Error when getting all Customers", ex);
+            throw new TransactionException("Error when getting all Customers", ex);
+        } finally {
+            DBUtils.closeQuietly(connection);
+        }
+    }
+
+    @Override
     public List<Car> getAllCustomerCars(Customer customer) throws IllegalArgumentException, TransactionException {
         if (null == customer) {
             throw new IllegalArgumentException("CUSTOMER POINTS TO NULL");
@@ -62,7 +119,7 @@ public class RentlManagerImplementation implements RentlManager {
         PreparedStatement statement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.prepareStatement("SELECT car FROM INVENTORIES WHERE customer=?");
+            statement = connection.prepareStatement("SELECT car FROM RENTS WHERE customer=?");
             statement.setLong(1, customer.getID());
             ResultSet resultSet = statement.executeQuery();
             List<Car> customerCars = new ArrayList<>();
@@ -71,8 +128,8 @@ public class RentlManagerImplementation implements RentlManager {
             }
             return customerCars;
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Error when getting Cars from Inventory DB", ex);
-            throw new TransactionException("Error when getting Cars from Inventory DB", ex);
+            logger.log(Level.SEVERE, "Error when getting Cars from Rent DB", ex);
+            throw new TransactionException("Error when getting Cars from Rent DB", ex);
         } finally {
             DBUtils.closeQuietly(connection);
         }
@@ -96,21 +153,21 @@ public class RentlManagerImplementation implements RentlManager {
         PreparedStatement statement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.prepareStatement("INSERT INTO INVENTORIES (car, customer, rent_date, due_date) VALUES (?,?,?,?)");
+            statement = connection.prepareStatement("INSERT INTO RENTS (car, customer, rent_date, due_date) VALUES (?,?,?,?)");
             statement.setLong(1, car.getID());
             statement.setLong(2, customer.getID());
             statement.setDate(3, rentDate);
             statement.setDate(4, dueDate);
             if (1 != statement.executeUpdate()) {
-                throw new TransactionException("Cant INSERT Inventory to InventoryDB");
+                throw new TransactionException("Cant INSERT Rent to RentDB");
             }
             car.setStatus(Boolean.FALSE);
             customer.setActive(Boolean.TRUE);
             carManager.updateCarInfo(car);
             customerManager.updateCustomerInfo(customer);
         } catch (SQLException ex) {
-            logger.log(Level.SEVERE, "Error when renting car to customer in InventoryDB", ex);
-            throw new TransactionException("Error when renting car to customer in InventoryDB", ex);
+            logger.log(Level.SEVERE, "Error when renting car to customer in RentDB", ex);
+            throw new TransactionException("Error when renting car to customer in RentDB", ex);
         } finally {
             DBUtils.closeQuietly(connection);
         }
@@ -131,7 +188,7 @@ public class RentlManagerImplementation implements RentlManager {
         PreparedStatement statement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.prepareStatement("DELETE FROM INVENTORIES WHERE customer=? AND car=?");
+            statement = connection.prepareStatement("DELETE FROM RENTS WHERE customer=? AND car=?");
             statement.setLong(1, customer.getID());
             statement.setLong(2, car.getID());
 
@@ -151,6 +208,16 @@ public class RentlManagerImplementation implements RentlManager {
             DBUtils.closeQuietly(connection);
         }
 
+    }
+
+    private Rent getRentFromResultSet(ResultSet resultSet) throws SQLException {
+        Rent rent = new Rent();
+        rent.setID(resultSet.getLong("ID"));
+        rent.setCarID(Long.parseLong(resultSet.getString("CAR")));
+        rent.setCustomerID(Long.parseLong(resultSet.getString("CUSTOMER")));
+        rent.setRentDate(Date.valueOf(resultSet.getString("RENT_DATE")));
+        rent.setDueDate(Date.valueOf(resultSet.getString("DUE_DATE")));
+        return rent;
     }
 
     public void tryCreateTables() {

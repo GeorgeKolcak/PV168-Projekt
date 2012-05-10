@@ -50,7 +50,7 @@ public class Rent {
 
     @Override
     public String toString() {
-        return "CarRentalInventory{" + "ID=" + ID + ", rentDate=" + rentDate + ", dueDate=" + dueDate + ", carID=" + carID + ", customerID=" + customerID + '}';
+        return "Rent{" + "ID=" + ID + ", rentDate=" + rentDate + ", dueDate=" + dueDate + ", carID=" + carID + ", customerID=" + customerID + '}';
     }
 
     @Override

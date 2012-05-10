@@ -4,7 +4,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -552,7 +555,7 @@ public class MainForm extends javax.swing.JFrame {
 
                     List<Rent> allCustomerCars = new ArrayList<>();
                     for (Car car : rentManager.getAllCustomerCars(customer)) {
-                        Rent rent = rentManager.getRentWithCar(car);
+                        Rent rent = rentManager.findRentWithCar(car);
                         allCustomerCars.add(rent);
                     }
                     return allCustomerCars;
@@ -584,7 +587,7 @@ public class MainForm extends javax.swing.JFrame {
                     }
 
                     List<Rent> rentFoundCustomer = new ArrayList<>();
-                    rentFoundCustomer.add(rentManager.getRentWithCar(car));
+                    rentFoundCustomer.add(rentManager.findRentWithCar(car));
 
                     return rentFoundCustomer;
 
@@ -1245,13 +1248,7 @@ public class MainForm extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(MainForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
@@ -1261,6 +1258,7 @@ public class MainForm extends javax.swing.JFrame {
          */
         java.awt.EventQueue.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 new MainForm().setVisible(true);
             }
@@ -1341,7 +1339,7 @@ public class MainForm extends javax.swing.JFrame {
     private DataSource dataSource = null;
     private CarManager carManager = new CarManagerImplementation();
     private CustomerManager customerManager = new CustomerManagerImplementation();
-    private RentlManager rentManager = new RentManagerImplementation();
+    private RentManager rentManager = new RentManagerImplementation();
     private CustomersActions customersAction;
     private CarsActions carsAction;
     private RentsActions rentsAction;
