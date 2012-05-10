@@ -66,6 +66,9 @@ public class Car {
         if (null == obj) {
             return false;
         }
+        
+        
+        
         if (getClass() != obj.getClass()) {
             return false;
         }
