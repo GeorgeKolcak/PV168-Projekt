@@ -1,9 +1,11 @@
 package cz.muni.fi.pv168;
 
+import java.io.FileOutputStream;
 import java.sql.Date;
 import java.util.List;
+import javax.sql.DataSource;
 
-public interface CarRentalManager {
+public interface RentlManager {
 
     public Customer findCustomerWithCar(Car car) throws IllegalArgumentException, TransactionException;
 
@@ -12,4 +14,8 @@ public interface CarRentalManager {
     public void rentCarToCustomer(Car car, Customer customer, Date rentDate, Date dueDate) throws IllegalArgumentException, TransactionException;
 
     public void getCarFromCustomer(Car car, Customer customer) throws IllegalArgumentException, TransactionException;
+
+    public void setDataSource(DataSource ds);
+    
+    public void setLogger(FileOutputStream fs);
 }

@@ -1,13 +1,16 @@
 package cz.muni.fi.pv168;
 
+import java.io.FileOutputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 import javax.sql.DataSource;
 
-public class CarRentalManagerImplementation implements CarRentalManager {
+public class RentlManagerImplementation implements RentlManager {
 
     @Override
     public Customer findCustomerWithCar(Car car) throws IllegalArgumentException, TransactionException {
@@ -17,7 +20,7 @@ public class CarRentalManagerImplementation implements CarRentalManager {
         if (null == car.getID()) {
             throw new IllegalArgumentException("Can't find Car with NULL ID");
         }
-        if (car.getStatus()) {
+        if (car.getAvailable()) {
             throw new IllegalArgumentException("Car is NOT RENTED");
         }
         Connection connection = null;
@@ -52,7 +55,7 @@ public class CarRentalManagerImplementation implements CarRentalManager {
         if (null == customer.getID()) {
             throw new IllegalArgumentException("CUSTOMER ID IN NULL");
         }
-        if (!customer.isActive()) {
+        if (!customer.getActive()) {
             throw new IllegalArgumentException("CUSTOMER IS NOT ACTIVE");
         }
         Connection connection = null;
@@ -86,7 +89,7 @@ public class CarRentalManagerImplementation implements CarRentalManager {
         if (null == customer.getID()) {
             throw new IllegalArgumentException("Customer ID is NULL");
         }
-        if (!car.getStatus()) {
+        if (!car.getAvailable()) {
             throw new IllegalArgumentException("Car is already rented");
         }
         Connection connection = null;
@@ -121,7 +124,7 @@ public class CarRentalManagerImplementation implements CarRentalManager {
         if ((null == car.getID()) || (null == customer.getID())) {
             throw new IllegalArgumentException("Customer or Car ID is NULL not exist in DB");
         }
-        if (!customer.isActive()) {
+        if (!customer.getActive()) {
             throw new IllegalArgumentException("Customer is not active");
         }
         Connection connection = null;
@@ -161,6 +164,7 @@ public class CarRentalManagerImplementation implements CarRentalManager {
         }
     }
 
+    @Override
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
         carManager.setDataSource(dataSource);
@@ -170,4 +174,9 @@ public class CarRentalManagerImplementation implements CarRentalManager {
     private CustomerManager customerManager = new CustomerManagerImplementation();
     private CarManager carManager = new CarManagerImplementation();
     private DataSource dataSource;
+
+    @Override
+    public void setLogger(FileOutputStream fs) {
+        logger.addHandler(new StreamHandler(fs, new SimpleFormatter()));
+    }
 }

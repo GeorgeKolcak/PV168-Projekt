@@ -9,14 +9,13 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-public class CarManagerImplementationTest {
+public class CarManagerTest {
 
     private CarManager manager;
     private DataSource dataSource;
 
     @Before
-    public void setUp() throws SQLException
-    {
+    public void setUp() throws SQLException {
         dataSource = prepareDataSource();
         DBUtils.createTables(dataSource);
         manager = new CarManagerImplementation();
@@ -24,8 +23,7 @@ public class CarManagerImplementationTest {
     }
 
     @After
-    public void tearDown() throws SQLException
-    {
+    public void tearDown() throws SQLException {
         DBUtils.dropTables(dataSource);
     }
 
@@ -37,7 +35,7 @@ public class CarManagerImplementationTest {
 
         Long id = car.getID();
         assertNotNull(id);
-        assertTrue(car.getStatus());
+        assertTrue(car.getAvailable());
 
         Car result = manager.findCarByID(id);
         assertEquals(car, result);
@@ -46,8 +44,7 @@ public class CarManagerImplementationTest {
     }
 
     @Test
-    public void findCarByID()
-    {
+    public void findCarByID() {
         assertNull(manager.findCarByID(1l));
         Car car = newCar("Black", "0B6 6835", "Škoda", 200.0);
         manager.addCar(car);
@@ -171,7 +168,7 @@ public class CarManagerImplementationTest {
         assertEquals("0B6 6835", car1.getLicensePlate());
         assertEquals("Škoda", car1.getModel());
         assertEquals(Double.valueOf(200.0), Double.valueOf(car1.getRentalPayment()));
-        assertTrue(car1.getStatus());
+        assertTrue(car1.getAvailable());
 
         car1 = manager.findCarByID(id);
         car1.setLicensePlate("8B5 0983");
@@ -180,7 +177,7 @@ public class CarManagerImplementationTest {
         assertEquals("8B5 0983", car1.getLicensePlate());
         assertEquals("Škoda", car1.getModel());
         assertEquals(Double.valueOf(200.0), Double.valueOf(car1.getRentalPayment()));
-        assertTrue(car1.getStatus());
+        assertTrue(car1.getAvailable());
 
         car1 = manager.findCarByID(id);
         car1.setModel("Volkswagen");
@@ -189,7 +186,7 @@ public class CarManagerImplementationTest {
         assertEquals("8B5 0983", car1.getLicensePlate());
         assertEquals("Volkswagen", car1.getModel());
         assertEquals(Double.valueOf(200.0), Double.valueOf(car1.getRentalPayment()));
-        assertTrue(car1.getStatus());
+        assertTrue(car1.getAvailable());
 
         car1 = manager.findCarByID(id);
         car1.setRentalPayment(300.0);
@@ -198,7 +195,7 @@ public class CarManagerImplementationTest {
         assertEquals("8B5 0983", car1.getLicensePlate());
         assertEquals("Volkswagen", car1.getModel());
         assertEquals(Double.valueOf(300.0), Double.valueOf(car1.getRentalPayment()));
-        assertTrue(car1.getStatus());
+        assertTrue(car1.getAvailable());
 
         car1 = manager.findCarByID(id);
         car1.setRentalPayment(0.0);
@@ -207,7 +204,7 @@ public class CarManagerImplementationTest {
         assertEquals("8B5 0983", car1.getLicensePlate());
         assertEquals("Volkswagen", car1.getModel());
         assertEquals(Double.valueOf(0.0), Double.valueOf(car1.getRentalPayment()));
-        assertTrue(car1.getStatus());
+        assertTrue(car1.getAvailable());
 
         car1 = manager.findCarByID(id);
         car1.setStatus(false);
@@ -216,7 +213,7 @@ public class CarManagerImplementationTest {
         assertEquals("8B5 0983", car1.getLicensePlate());
         assertEquals("Volkswagen", car1.getModel());
         assertEquals(Double.valueOf(0.0), Double.valueOf(car1.getRentalPayment()));
-        assertFalse(car1.getStatus());
+        assertFalse(car1.getAvailable());
 
         assertCarDeepEquals(car2, manager.findCarByID(car2.getID()));
     }
@@ -284,8 +281,7 @@ public class CarManagerImplementationTest {
     }
 
     @Test
-    public void getAllCars()
-    {
+    public void getAllCars() {
         assertTrue(manager.getAllCars().isEmpty());
 
         Car car1 = newCar("Black", "0B6 6835", "Škoda", 200.0);
@@ -346,17 +342,16 @@ public class CarManagerImplementationTest {
         assertEquals(expected.getLicensePlate(), actual.getLicensePlate());
         assertEquals(expected.getModel(), actual.getModel());
         assertEquals(expected.getRentalPayment(), actual.getRentalPayment());
-        assertEquals(expected.getStatus(), actual.getStatus());
+        assertEquals(expected.getAvailable(), actual.getAvailable());
     }
 
-    public static void assertCarDeepEquals(List<Car> expected, List<Car> actual)
-    {        
+    public static void assertCarDeepEquals(List<Car> expected, List<Car> actual) {
         assertEquals(expected.size(), actual.size());
         List<Car> expectedSortedList = new ArrayList<>(expected);
         List<Car> actualSortedList = new ArrayList<>(actual);
         Collections.sort(expectedSortedList, carByIDComparator);
         Collections.sort(actualSortedList, carByIDComparator);
-        
+
         for (int i = 0; i < actualSortedList.size(); i++) {
             assertCarDeepEquals(expectedSortedList.get(i), actualSortedList.get(i));
         }
@@ -369,8 +364,7 @@ public class CarManagerImplementationTest {
         }
     };
 
-    private static DataSource prepareDataSource() throws SQLException
-    {
+    private static DataSource prepareDataSource() throws SQLException {
         BasicDataSource ds = new BasicDataSource();
         ds.setUrl("jdbc:derby:memory:CarRentalDB;create=true");
         return ds;

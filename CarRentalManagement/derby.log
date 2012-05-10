@@ -1,10 +1,10 @@
 ----------------------------------------------------------------
-Wed Apr 11 18:18:14 CEST 2012:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.1.2 - (1095077): instance a816c00e-0136-a232-b79d-000002f152a0 
-on database directory memory:C:\Users\Jooji\Documents\Java Projects\Seminar\SVN\CarRentalManagement\CarRentalDB  with class loader sun.misc.Launcher$AppClassLoader@27cb01e3 
-Loaded from file:/C:/Program%20Files/Java/jdk1.7.0_01/db/lib/derby.jar
+Thu May 10 19:43:52 CEST 2012:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.8.1.2 - (1095077): instance a816c00e-0137-37d9-878d-000000989d88 
+on database directory memory:C:\Users\4epa\PV168-Projekt\CarRentalManagement\CarRentalDB  with class loader sun.misc.Launcher$AppClassLoader@209f4e 
+Loaded from file:/C:/Users/4epa/Documents/NetBeansProjects/Java/drivers/derby.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.7.0_01-b08
-user.dir=C:\Users\Jooji\Documents\Java Projects\Seminar\SVN\CarRentalManagement
+java.runtime.version=1.7.0_03-b05
+user.dir=C:\Users\4epa\PV168-Projekt\CarRentalManagement
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''

@@ -270,7 +270,7 @@ public class MainForm extends javax.swing.JFrame {
                     addCar.setModel("Put From Form");
                     addCar.setColor("Put From Form");
                     addCar.setLicensePlate("Put From Form");
-                    addCar.setAvailable(Boolean.TRUE);
+                    addCar.setStatus(Boolean.TRUE);
                     try {
                         carManager.addCar(addCar);
 
@@ -1341,7 +1341,7 @@ public class MainForm extends javax.swing.JFrame {
     private DataSource dataSource = null;
     private CarManager carManager = new CarManagerImplementation();
     private CustomerManager customerManager = new CustomerManagerImplementation();
-    private RentManager rentManager = new RentManagerImplementation();
+    private RentlManager rentManager = new RentManagerImplementation();
     private CustomersActions customersAction;
     private CarsActions carsAction;
     private RentsActions rentsAction;

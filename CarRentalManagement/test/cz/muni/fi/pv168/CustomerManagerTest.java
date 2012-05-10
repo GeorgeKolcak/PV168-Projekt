@@ -4,16 +4,17 @@ import java.sql.SQLException;
 import java.util.*;
 import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.junit.*;
+import org.junit.After;
 import static org.junit.Assert.*;
+import org.junit.Before;
+import org.junit.Test;
 
-public class CustomerManagerImplementationTest {
+public class CustomerManagerTest {
 
     private CustomerManager manager;
     private DataSource dataSource;
 
-    private static DataSource prepareDataSource() throws SQLException
-    {
+    private static DataSource prepareDataSource() throws SQLException {
         BasicDataSource ds = new BasicDataSource();
         ds.setUrl("jdbc:derby:memory:CarRentalDB;create=true");
         return ds;
@@ -86,7 +87,7 @@ public class CustomerManagerImplementationTest {
     @Test
     public void testRemoveCustomer() {
         assertTrue(manager.getAllCustomers().isEmpty());
-        
+
         Customer customer1 = newCustomer("Vitalii", "Chepeliuk", "Komarov", "5-20-86", "AK 373979");
         Customer customer2 = newCustomer("Juraj", "Kolchak", "Komarov", "5-34-86", "AK 372548");
         Customer customer3 = newCustomer("Martin", "Jirman", "Lazhot", "5-25-87", "AK 251245");
@@ -146,7 +147,7 @@ public class CustomerManagerImplementationTest {
     @Test
     public void testGetAllCustomers() {
         assertTrue(manager.getAllCustomers().isEmpty());
-        
+
         Customer customer1 = newCustomer("Vitalii", "Chepeliuk", "Komarov", "5-20-86", "AK 373979");
         Customer customer2 = newCustomer("Juraj", "Kolchak", "Komarov", "5-34-86", "AK 372548");
         Customer customer3 = newCustomer("Martin", "Jirman", "Lazhot", "5-25-87", "AK 251245");
@@ -252,17 +253,16 @@ public class CustomerManagerImplementationTest {
         assertEquals(expected.getLastName(), actual.getLastName());
         assertEquals(expected.getAddress(), actual.getAddress());
         assertEquals(expected.getPhoneNumber(), actual.getPhoneNumber());
-        assertEquals(expected.isActive(), actual.isActive());
+        assertEquals(expected.getActive(), actual.getActive());
     }
 
-    public static void assertCustomerDeepEquals(List<Customer> expected, List<Customer> actual)
-    {
+    public static void assertCustomerDeepEquals(List<Customer> expected, List<Customer> actual) {
         assertEquals(expected.size(), actual.size());
         List<Customer> expectedSortedList = new ArrayList<>(expected);
         List<Customer> actualSortedList = new ArrayList<>(actual);
         Collections.sort(expectedSortedList, CustomerByIDComparator);
         Collections.sort(actualSortedList, CustomerByIDComparator);
-        
+
         for (int i = 0; i < expectedSortedList.size(); i++) {
             assertCustomerDeepEquals(expectedSortedList.get(i), actualSortedList.get(i));
         }

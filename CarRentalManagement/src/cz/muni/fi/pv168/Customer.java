@@ -55,7 +55,7 @@ public class Customer {
         this.phoneNumber = phoneNumber;
     }
 
-    public Boolean isActive() {
+    public Boolean getActive() {
         return active;
     }
 

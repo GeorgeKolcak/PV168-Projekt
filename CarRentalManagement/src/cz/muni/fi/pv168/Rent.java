@@ -3,9 +3,9 @@ package cz.muni.fi.pv168;
 import java.sql.Date;
 import java.util.Objects;
 
-public class CarInventory {
+public class Rent {
 
-    public CarInventory() {
+    public Rent() {
     }
 
     public Long getID() {
@@ -61,7 +61,7 @@ public class CarInventory {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final CarInventory other = (CarInventory) obj;
+        final Rent other = (Rent) obj;
         if (!Objects.equals(this.toString(), other.toString())) {
             return false;
         }
