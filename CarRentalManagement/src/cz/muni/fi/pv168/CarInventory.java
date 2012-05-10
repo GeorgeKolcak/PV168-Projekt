@@ -1,0 +1,80 @@
+package cz.muni.fi.pv168;
+
+import java.sql.Date;
+import java.util.Objects;
+
+public class CarInventory {
+
+    public CarInventory() {
+    }
+
+    public Long getID() {
+        return ID;
+    }
+
+    public void setID(Long ID) {
+        this.ID = ID;
+    }
+
+    public Long getCarID() {
+        return carID;
+    }
+
+    public void setCarID(Long carID) {
+        this.carID = carID;
+    }
+
+    public Long getCustomerID() {
+        return customerID;
+    }
+
+    public void setCustomerID(Long customerID) {
+        this.customerID = customerID;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public void setDueDate(Date dueDate) {
+        this.dueDate = dueDate;
+    }
+
+    public Date getRentDate() {
+        return rentDate;
+    }
+
+    public void setRentDate(Date rentDate) {
+        this.rentDate = rentDate;
+    }
+
+    @Override
+    public String toString() {
+        return "CarRentalInventory{" + "ID=" + ID + ", rentDate=" + rentDate + ", dueDate=" + dueDate + ", carID=" + carID + ", customerID=" + customerID + '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (null == obj) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final CarInventory other = (CarInventory) obj;
+        if (!Objects.equals(this.toString(), other.toString())) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
+    }
+    private Long ID;
+    private Date rentDate;
+    private Date dueDate;
+    private Long carID;
+    private Long customerID;
+}

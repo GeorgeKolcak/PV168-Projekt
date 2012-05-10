@@ -1,0 +1,131 @@
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168
+END
+CustomersTableModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/CustomersTableModel.java
+END
+localization_cs_CZ.properties
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/localization_cs_CZ.properties
+END
+database.properties
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/database.properties
+END
+localization.properties
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/localization.properties
+END
+localization_de_DE.properties
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/localization_de_DE.properties
+END
+localization_ru_RU.properties
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/localization_ru_RU.properties
+END
+localization_sk_SK.properties
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/localization_sk_SK.properties
+END
+NewCustomerForm.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/NewCustomerForm.java
+END
+CarRentalManagementGUI.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/CarRentalManagementGUI.java
+END
+NewCustomerForm.form
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/NewCustomerForm.form
+END
+DatabaseConnectionForm.java
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/DatabaseConnectionForm.java
+END
+MainForm.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/MainForm.java
+END
+NewRentForm.java
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/NewRentForm.java
+END
+DatabaseConnectionForm.form
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/DatabaseConnectionForm.form
+END
+MainForm.form
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/MainForm.form
+END
+NewRentForm.form
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/NewRentForm.form
+END
+CarsTableModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/CarsTableModel.java
+END
+NewCarForm.java
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/NewCarForm.java
+END
+NewCarForm.form
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/NewCarForm.form
+END
+RentsTableModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/RentsTableModel.java
+END
+SortFilterModel.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/fi/xkolcak_PB168/!svn/ver/45/Java/CarRentalManagementGUI/src/cz/muni/fi/pv168/SortFilterModel.java
+END
