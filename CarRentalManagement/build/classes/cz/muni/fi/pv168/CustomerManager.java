@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168;
 
+import java.io.FileOutputStream;
 import java.util.List;
 import javax.sql.DataSource;
 
@@ -18,6 +19,6 @@ public interface CustomerManager {
     public List<Customer> getActiveCustomers() throws IllegalArgumentException, TransactionException;
     
     public void setDataSource(DataSource ds);
-
-    public void tryCreateTables();
+    
+    public void setLogger(FileOutputStream fs);
 }

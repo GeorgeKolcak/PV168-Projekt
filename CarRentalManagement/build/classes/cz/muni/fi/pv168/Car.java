@@ -1,6 +1,5 @@
 package cz.muni.fi.pv168;
 
-import java.awt.Color;
 import java.util.Objects;
 
 public class Car {
@@ -48,7 +47,7 @@ public class Car {
         this.rentalPayment = rentalPayment;
     }
 
-    public Boolean getStatus() {
+    public Boolean getAvailable() {
         return available;
     }
 
@@ -66,6 +65,9 @@ public class Car {
         if (null == obj) {
             return false;
         }
+
+
+
         if (getClass() != obj.getClass()) {
             return false;
         }

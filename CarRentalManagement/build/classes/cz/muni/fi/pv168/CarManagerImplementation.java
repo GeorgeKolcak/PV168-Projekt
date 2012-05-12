@@ -1,11 +1,14 @@
 package cz.muni.fi.pv168;
 
 import java.awt.Color;
+import java.io.FileOutputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 import javax.sql.DataSource;
 
 public class CarManagerImplementation implements CarManager {
@@ -39,7 +42,7 @@ public class CarManagerImplementation implements CarManager {
             statement.setString(2, car.getLicensePlate());
             statement.setString(3, car.getModel());
             statement.setDouble(4, car.getRentalPayment());
-            statement.setBoolean(5, car.getStatus());
+            statement.setBoolean(5, car.getAvailable());
 
             int addedRows = statement.executeUpdate();
             if (1 != addedRows) {
@@ -64,7 +67,7 @@ public class CarManagerImplementation implements CarManager {
         if (null == car.getID()) {
             throw new IllegalArgumentException("Can't DELETE Car with NO ID");
         }
-        if (!car.getStatus()) {
+        if (!car.getAvailable()) {
             throw new IllegalArgumentException("Can't DELETE rented Car");
         }
         //Remove Car from DB
@@ -128,7 +131,7 @@ public class CarManagerImplementation implements CarManager {
             throw new IllegalArgumentException("Can't UPDATE Car with NULL ID");
         }
         if ((null == car.getColor()) || (null == car.getLicensePlate()) || (null == car.getModel())
-                || (null == car.getRentalPayment()) || (car.getRentalPayment() < 0) || (null == car.getStatus())) {
+                || (null == car.getRentalPayment()) || (car.getRentalPayment() < 0) || (null == car.getAvailable())) {
             throw new IllegalArgumentException("Car with WRONG PARAMETRS");
         }
 
@@ -142,7 +145,7 @@ public class CarManagerImplementation implements CarManager {
             statement.setString(2, car.getLicensePlate());
             statement.setString(3, car.getModel());
             statement.setDouble(4, car.getRentalPayment());
-            statement.setBoolean(5, car.getStatus());
+            statement.setBoolean(5, car.getAvailable());
             statement.setLong(6, car.getID());
             if (0 == statement.executeUpdate()) {
                 throw new TransactionException("Error UPDATE Car from DB with ID " + car.getID());
@@ -200,7 +203,7 @@ public class CarManagerImplementation implements CarManager {
             DBUtils.closeQuietly(connection);
         }
     }
-    
+
     private Car getCarFromResultSet(ResultSet resultSet) throws SQLException {
         Car car = new Car();
         car.setID(resultSet.getLong("id"));
@@ -212,7 +215,6 @@ public class CarManagerImplementation implements CarManager {
         return car;
     }
 
-    @Override
     public void tryCreateTables() {
         if (null == dataSource) {
             throw new IllegalStateException("DataSource is not set");
@@ -223,7 +225,11 @@ public class CarManagerImplementation implements CarManager {
             throw new IllegalStateException("Error when trying to create tables");
         }
     }
-     
     public static final Logger logger = Logger.getLogger(CarManagerImplementation.class.getName());
     private DataSource dataSource;
+
+    @Override
+    public void setLogger(FileOutputStream fs) {
+        logger.addHandler(new StreamHandler(fs, new SimpleFormatter()));
+    }
 }

@@ -1,10 +1,13 @@
 package cz.muni.fi.pv168;
 
+import java.io.FileOutputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 import javax.sql.DataSource;
 
 public class CustomerManagerImplementation implements CustomerManager {
@@ -38,7 +41,7 @@ public class CustomerManagerImplementation implements CustomerManager {
             statement.setString(3, customer.getAddress());
             statement.setString(4, customer.getPhoneNumber());
             statement.setString(5, customer.getDriversLicense());
-            statement.setBoolean(6, customer.isActive());
+            statement.setBoolean(6, customer.getActive());
 
             if (1 != statement.executeUpdate()) {
                 throw new TransactionException("Can't INSERT Customer in DB" + customer);
@@ -61,7 +64,7 @@ public class CustomerManagerImplementation implements CustomerManager {
         if (null == customer.getID()) {
             throw new IllegalArgumentException("Can't DELETE Customer with NULL ID");
         }
-        if (customer.isActive()) {
+        if (customer.getActive()) {
             throw new IllegalArgumentException("Can't DELETE active Customer");
         }
         Connection connection = null;
@@ -156,7 +159,7 @@ public class CustomerManagerImplementation implements CustomerManager {
             statement.setString(3, customer.getAddress());
             statement.setString(4, customer.getPhoneNumber());
             statement.setString(5, customer.getDriversLicense());
-            statement.setBoolean(6, customer.isActive());
+            statement.setBoolean(6, customer.getActive());
             statement.setLong(7, customer.getID());
             if (0 == statement.executeUpdate()) {
                 throw new TransactionException("Customer with given ID not exist");
@@ -202,7 +205,6 @@ public class CustomerManagerImplementation implements CustomerManager {
         return customer;
     }
 
-    @Override
     public void tryCreateTables() {
         if (null == dataSource) {
             throw new IllegalStateException("DataSource is not set");
@@ -215,4 +217,9 @@ public class CustomerManagerImplementation implements CustomerManager {
     }
     public static final Logger logger = Logger.getLogger(CustomerManagerImplementation.class.getName());
     private DataSource dataSource;
+
+    @Override
+    public void setLogger(FileOutputStream fs) {
+        logger.addHandler(new StreamHandler(fs, new SimpleFormatter()));
+    }
 }
