@@ -62,16 +62,17 @@ public class Rent {
             return false;
         }
         final Rent other = (Rent) obj;
-        if (!Objects.equals(this.toString(), other.toString())) {
-            return false;
-        }
-        return true;
+        
+        return (this.ID == other.ID);
     }
 
     @Override
     public int hashCode() {
-        return this.toString().hashCode();
+        int hash = 3;
+        hash = 89 * hash + Objects.hashCode(this.ID);
+        return hash;
     }
+
     private Long ID;
     private Date rentDate;
     private Date dueDate;

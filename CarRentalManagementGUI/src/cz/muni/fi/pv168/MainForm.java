@@ -3,6 +3,7 @@ package cz.muni.fi.pv168;
 import java.awt.event.ActionEvent;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -51,6 +52,20 @@ public class MainForm extends javax.swing.JFrame {
         ds.setUrl(url);
         ds.setUsername(username);
         ds.setPassword(password);
+        
+        try
+        {
+            DBUtils.tryCreateTables(ds);
+        }
+        catch (SQLException ex)
+        {
+            JOptionPane.showMessageDialog(jMenu1, localization.getString("db_connection_failure"),
+                localization.getString("error"), JOptionPane.ERROR_MESSAGE);
+        }
+        
+        carManager.setDataSource(ds);
+        customerManager.setDataSource(ds);
+        rentManager.setDataSource(ds);
         
         return ds;
     }
@@ -316,53 +331,25 @@ public class MainForm extends javax.swing.JFrame {
                     return carManager.getAllCars();
                 }
                 case EDIT_CAR:
-                    Car editCar = null;
-                    Long ID = Long.parseLong(""/*
-                             * Label.getText
-                             */);
-                    // Get Data From Form!!!
-                    //String editModel = TextField.getText();
-                    //String editColor = TextField.getText();
-                    //String editLicensePlate = TextField.getText();
-                    editCar.setID(ID);
-                    editCar.setModel("Put From Form");
-                    editCar.setColor("Put From Form");
-                    editCar.setLicensePlate("Put From Form");
-                    editCar.setRentalPayment(0.0/*
-                             * Put From Form
-                             */);
                     try {
-                        carManager.updateCarInfo(editCar);
+                        carManager.updateCarInfo(car);
                     } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(rootPane, localization.getString("CAN_NOT_UPDATE_CAR"),
+                        JOptionPane.showMessageDialog(rootPane,
+                                (localization.getString("cannot_update_car") + " " + car.getID()),
                                 localization.getString("error"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                     return carManager.getAllCars();
 
                 case REMOVE_CAR:
-                    if (-1 != carTable.getSelectedRow()) {
-                        Car removeCar = new Car();
-                        Long removeID = ((Long) carTable.getValueAt(carTable.getSelectedRow(), 0));
-                        removeCar.setID(removeID);
-                        removeCar.setModel((String) carTable.getValueAt(
-                                carTable.getSelectedRow(), 1));
-                        removeCar.setColor((String) carTable.getValueAt(
-                                carTable.getSelectedRow(), 2));
-                        removeCar.setLicensePlate((String) carTable.getValueAt(
-                                carTable.getSelectedRow(), 3));
-                        removeCar.setRentalPayment((Double) carTable.getValueAt(
-                                carTable.getSelectedRow(), 4));
-                        try {
-                            carManager.removeCar(removeCar);
-                        } catch (IllegalArgumentException ex) {
-                            JOptionPane.showMessageDialog(rootPane, localization.getString("CAN_NOT_REMOVE_CAR"),
-                                    localization.getString("error"), JOptionPane.ERROR_MESSAGE);
-                        }
-                        return carManager.getAllCars();
-                    } else {
-                        return null;
+                    try {
+                        carManager.removeCar(car);
+                    } catch (IllegalArgumentException ex) {
+                        JOptionPane.showMessageDialog(rootPane,
+                                (localization.getString("cannot_remove_car") + " " + car.getID()),
+                                localization.getString("error"), JOptionPane.ERROR_MESSAGE);
                     }
+                    return carManager.getAllCars();
                 case FIND_CAR_BY_ID:
                     String stringID = JOptionPane.showInputDialog(null, localization.getString("ENTER_CAR_ID"), localization.getString("FIND"),
                             JOptionPane.QUESTION_MESSAGE);
@@ -371,7 +358,7 @@ public class MainForm extends javax.swing.JFrame {
                         return null;
                     }
                     try {
-                        ID = Long.parseLong(stringID);
+                        foundID = Long.parseLong(stringID);
                     } catch (NumberFormatException ex) {
                         JOptionPane.showMessageDialog(rootPane, localization.getString("WRONG_NUMBER_INPUT"),
                                 localization.getString("error"), JOptionPane.ERROR_MESSAGE);
@@ -379,7 +366,7 @@ public class MainForm extends javax.swing.JFrame {
                     }
                     Car foundCar = null;
                     try {
-                        foundCar = carManager.findCarByID(ID);
+                        foundCar = carManager.findCarByID(foundID);
                         if (null == foundCar) {
                             JOptionPane.showMessageDialog(rootPane, localization.getString("WRONG_CAR_ID"),
                                     localization.getString("NOT_FOUND"), JOptionPane.INFORMATION_MESSAGE);
@@ -746,7 +733,7 @@ public class MainForm extends javax.swing.JFrame {
 
         jTabbedPane1.setTitleAt(0, localization.getString("cars"));
         jTabbedPane1.setTitleAt(1, localization.getString("customers"));
-        jTabbedPane1.setTitleAt(2, localization.getString("rent"));
+        jTabbedPane1.setTitleAt(2, localization.getString("rents"));
         
         carTable.setModel(new CarsTableModel(localization));
         customerTable.setModel(new CustomersTableModel(localization));
@@ -1334,6 +1321,7 @@ public class MainForm extends javax.swing.JFrame {
                     CarsTableModel ctm = (CarsTableModel)carTable.getModel();
                     
                     Set<Car> toBeRemovedCars = new HashSet<>();
+                    Set<Car> toBeUpdatedCars = new HashSet<>();
                     
                     if (ctm.hasNewCars())
                         for (Car c : ctm.getCars())
@@ -1345,7 +1333,13 @@ public class MainForm extends javax.swing.JFrame {
                         if (!isValid(c))
                             toBeRemovedCars.add(c);
                         else
-                            new CarSwingWorker(CarsActions.EDIT_CAR, c).execute();
+                            toBeUpdatedCars.add(c);
+                    }
+                    
+                    for (Car c : toBeUpdatedCars)
+                    {
+                        new CarSwingWorker(CarsActions.EDIT_CAR, c).execute();
+                        ctm.carResolved(c);
                     }
                     
                     if (!toBeRemovedCars.isEmpty())
@@ -1354,7 +1348,10 @@ public class MainForm extends javax.swing.JFrame {
                             localization.getString("car_info_missing"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
                         {
                             for (Car c : toBeRemovedCars)
+                            {
                                 new CarSwingWorker(CarsActions.REMOVE_CAR, c).execute();
+                                ctm.carResolved(c);
+                            }
                         }
                     }
                     

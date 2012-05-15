@@ -28,6 +28,11 @@ public class CarsTableModel extends AbstractTableModel {
         
         return false;
     }
+    
+    public void carResolved(Car car)
+    {
+        updatedCars.remove(car);
+    }
 
     public CarsTableModel(ResourceBundle localization)
     {
@@ -184,6 +189,7 @@ public class CarsTableModel extends AbstractTableModel {
     
     public void add(Car car)
     {
+        car.setStatus(true);
         cars.add(car);
         fireTableDataChanged();
     }

@@ -77,16 +77,17 @@ public class Customer {
             return false;
         }
         final Customer other = (Customer) obj;
-        if (!Objects.equals(this.toString(), other.toString())) {
-            return false;
-        }
-        return true;
+        
+        return (this.ID == other.ID);
     }
 
     @Override
     public int hashCode() {
-        return this.toString().hashCode();
+        int hash = 7;
+        hash = 59 * hash + Objects.hashCode(this.ID);
+        return hash;
     }
+    
     private Long ID;
     private String firstName;
     private String lastName;
