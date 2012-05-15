@@ -8,9 +8,14 @@ public class CustomersTableModel extends AbstractTableModel {
     private List<Customer> customers = new ArrayList<>();
     private ResourceBundle localization;
     
-    private Set<Long> updatedCustomers;
+    public List<Customer> getCustomers()
+    {
+        return Collections.unmodifiableList(customers);
+    }
     
-    public Set<Long> getUpdatedCustomers()
+    private Set<Customer> updatedCustomers;
+    
+    public Set<Customer> getUpdatedCustomers()
     {
         return Collections.unmodifiableSet(updatedCustomers);
     }
@@ -100,22 +105,22 @@ public class CustomersTableModel extends AbstractTableModel {
         if (rowIndex > customers.size()) {
             throw new IllegalArgumentException("Row Index Out Of Bounds.");
         }
-        Customer customer = ((rowIndex == customers.size()) ? null : customers.get(rowIndex));
+        Customer customer = ((rowIndex == customers.size()) ? new Customer() : customers.get(rowIndex));
         switch (columnIndex) {
             case 0:
-                return (((rowIndex == customers.size()) || (customer.getID() == null)) ? 0 : customer.getID());
+                return customer.getID();
             case 1:
-                return (((rowIndex == customers.size()) || (customer.getFirstName() == null)) ? "" : customer.getFirstName());
+                return customer.getFirstName();
             case 2:
-                return (((rowIndex == customers.size()) || (customer.getLastName() == null)) ? "" : customer.getLastName());
+                return customer.getLastName();
             case 3:
-                return (((rowIndex == customers.size()) || (customer.getAddress() == null)) ? "" : customer.getAddress());
+                return customer.getAddress();
             case 4:
-                return (((rowIndex == customers.size()) || (customer.getPhoneNumber() == null)) ? "" : customer.getPhoneNumber());
+                return customer.getPhoneNumber();
             case 5:
-                return (((rowIndex == customers.size()) || (customer.getDriversLicense() == null)) ? "" : customer.getDriversLicense());
+                return customer.getDriversLicense();
             case 6:
-                return ((rowIndex != customers.size()) && customer.getActive());
+                return customer.getActive();
             default:
                 throw new IllegalArgumentException("Column Index");
         }
@@ -130,7 +135,7 @@ public class CustomersTableModel extends AbstractTableModel {
         else if (rowIndex == customers.size())
         {
             customer = new Customer();
-            customers.add(customer);
+            add(customer);
         }
         else
             customer = customers.get(rowIndex);
@@ -138,35 +143,35 @@ public class CustomersTableModel extends AbstractTableModel {
             case 1:
             {
                 if (customer.getID() != null)
-                    updatedCustomers.add(customer.getID());
+                    updatedCustomers.add(customer);
                 customer.setFirstName((String) aValue);
                 break;
             }
             case 2:
             {
                 if (customer.getID() != null)
-                    updatedCustomers.add(customer.getID());
+                    updatedCustomers.add(customer);
                 customer.setLastName((String) aValue);
                 break;
             }
             case 3:
             {
                 if (customer.getID() != null)
-                    updatedCustomers.add(customer.getID());
+                    updatedCustomers.add(customer);
                 customer.setAddress((String) aValue);
                 break;
             }
             case 4:
             {
                 if (customer.getID() != null)
-                    updatedCustomers.add(customer.getID());
+                    updatedCustomers.add(customer);
                 customer.setPhoneNumber((String) aValue);
                 break;
             }
             case 5:
             {
                 if (customer.getID() != null)
-                    updatedCustomers.add(customer.getID());
+                    updatedCustomers.add(customer);
                 customer.setDriversLicense((String) aValue);
                 break;
             }
@@ -186,4 +191,10 @@ public class CustomersTableModel extends AbstractTableModel {
             return Long.valueOf(customer1.getID()).compareTo(Long.valueOf(customer2.getID()));
         }
     };
+    
+    public void add(Customer customer)
+    {
+        customers.add(customer);
+        fireTableDataChanged();   
+    }
 }

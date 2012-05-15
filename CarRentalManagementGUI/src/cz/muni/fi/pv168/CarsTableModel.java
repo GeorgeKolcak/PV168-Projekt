@@ -8,9 +8,14 @@ public class CarsTableModel extends AbstractTableModel {
     private List<Car> cars = new ArrayList<>();
     private ResourceBundle localization;
     
-    private Set<Long> updatedCars;
+    public List<Car> getCars()
+    {
+        return Collections.unmodifiableList(cars);
+    }
     
-    public Set<Long> getUpdatedCars()
+    private Set<Car> updatedCars;
+    
+    public Set<Car> getUpdatedCars()
     {
         return Collections.unmodifiableSet(updatedCars);
     }
@@ -99,20 +104,20 @@ public class CarsTableModel extends AbstractTableModel {
         if (rowIndex > cars.size()) {
             throw new IllegalArgumentException("Row Index Out of Bounds");
         }
-        Car car = ((rowIndex == cars.size()) ? null : cars.get(rowIndex));
+        Car car = ((rowIndex == cars.size()) ? new Car() : cars.get(rowIndex));
         switch (columnIndex) {
             case 0:
-                return (((rowIndex == cars.size()) || (car.getID() == null)) ? 0 : car.getID());
+                return car.getID();
             case 1:
-                return (((rowIndex == cars.size()) || (car.getModel() == null)) ? "" : car.getModel());
+                return car.getModel();
             case 2:
-                return (((rowIndex == cars.size()) || (car.getColor() == null)) ? "" : car.getColor());
+                return car.getColor();
             case 3:
-                return (((rowIndex == cars.size()) || (car.getLicensePlate() == null)) ? "" : car.getLicensePlate());
+                return car.getLicensePlate();
             case 4:
-                return (((rowIndex == cars.size()) || (car.getRentalPayment() == null)) ? 0.0 : car.getRentalPayment());
+                return car.getRentalPayment();
             case 5:
-                return ((rowIndex != cars.size()) && car.getAvailable());
+                return car.getAvailable();
             default:
                 throw new IllegalArgumentException("Column Index");
         }
@@ -127,7 +132,7 @@ public class CarsTableModel extends AbstractTableModel {
         else if (rowIndex == cars.size())
         {
             car = new Car();
-            cars.add(car);
+            add(car);
         }
         else
             car = cars.get(rowIndex);
@@ -135,28 +140,28 @@ public class CarsTableModel extends AbstractTableModel {
             case 1:
             {
                 if (car.getID() != null)
-                    updatedCars.add(car.getID());
+                    updatedCars.add(car);
                 car.setModel((String) aValue);
                 break;
             }
             case 2:
             {
                 if (car.getID() != null)
-                    updatedCars.add(car.getID());
+                    updatedCars.add(car);
                 car.setColor((String) aValue);
                 break;
             }
             case 3:
             {
                 if (car.getID() != null)
-                    updatedCars.add(car.getID());
+                    updatedCars.add(car);
                 car.setLicensePlate((String) aValue);
                 break;
             }
             case 4:
             {
                 if (car.getID() != null)
-                    updatedCars.add(car.getID());
+                    updatedCars.add(car);
                 car.setRentalPayment((Double) aValue);
                 break;
             }
@@ -176,4 +181,10 @@ public class CarsTableModel extends AbstractTableModel {
             return Long.valueOf(car1.getID()).compareTo(Long.valueOf(car2.getID()));
         }
     };
+    
+    public void add(Car car)
+    {
+        cars.add(car);
+        fireTableDataChanged();
+    }
 }

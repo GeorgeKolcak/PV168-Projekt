@@ -9,6 +9,11 @@ public class RentsTableModel extends AbstractTableModel {
     private List<Rent> rents = new ArrayList<>();
     private ResourceBundle localization;
     
+    public List<Rent> getRents()
+    {
+        return Collections.unmodifiableList(rents);
+    }
+    
     public RentsTableModel(ResourceBundle localization)
     {
         this.localization = localization;
