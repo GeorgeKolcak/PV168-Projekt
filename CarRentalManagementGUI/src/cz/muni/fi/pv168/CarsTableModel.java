@@ -6,8 +6,13 @@ import javax.swing.table.AbstractTableModel;
 public class CarsTableModel extends AbstractTableModel {
 
     List<Car> cars = new ArrayList<>();
-    private ResourceBundle resourceBundle = MainForm.RESOURCE_BUNDLE;
+    private ResourceBundle localization;
 
+    public CarsTableModel(ResourceBundle localization)
+    {
+        this.localization = localization;
+    }
+    
     public void updateCars(List<Car> newCars) {
         if (null == newCars) {
             return;
@@ -47,23 +52,23 @@ public class CarsTableModel extends AbstractTableModel {
             case 0:
                 return "ID";
             case 1:
-                return resourceBundle.getString("MODEL");
+                return localization.getString("model");
             case 2:
-                return resourceBundle.getString("COLOUR");
+                return localization.getString("colour");
             case 3:
-                return resourceBundle.getString("LICENSE_PLATE");
+                return localization.getString("license_plate");
             case 4:
-                return resourceBundle.getString("PAYMENT");
+                return localization.getString("price");
             case 5:
-                return resourceBundle.getString("AVAILABLE");
+                return localization.getString("available");
             default:
-                throw new IllegalArgumentException("Column Name");
+                throw new IllegalArgumentException("Column");
         }
     }
 
     @Override
     public int getRowCount() {
-        return cars.size();
+        return (cars.size() + 1);
     }
 
     @Override
@@ -76,20 +81,20 @@ public class CarsTableModel extends AbstractTableModel {
         if (rowIndex > cars.size()) {
             throw new IllegalArgumentException("Row Index Out of Bounds");
         }
-        Car car = cars.get(rowIndex);
+        Car car = ((rowIndex == cars.size()) ? null : cars.get(rowIndex));
         switch (columnIndex) {
             case 0:
-                return car.getID();
+                return (((rowIndex == cars.size()) || (car.getID() == null)) ? 0 : car.getID());
             case 1:
-                return car.getModel();
+                return (((rowIndex == cars.size()) || (car.getModel() == null)) ? "" : car.getModel());
             case 2:
-                return car.getColor();
+                return (((rowIndex == cars.size()) || (car.getColor() == null)) ? "" : car.getColor());
             case 3:
-                return car.getLicensePlate();
+                return (((rowIndex == cars.size()) || (car.getLicensePlate() == null)) ? "" : car.getLicensePlate());
             case 4:
-                return car.getRentalPayment();
+                return (((rowIndex == cars.size()) || (car.getRentalPayment() == null)) ? 0.0 : car.getRentalPayment());
             case 5:
-                return car.getAvailable();
+                return ((rowIndex != cars.size()) && car.getAvailable());
             default:
                 throw new IllegalArgumentException("Column Index");
         }
@@ -97,10 +102,17 @@ public class CarsTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        Car car = null;
         if (rowIndex > cars.size()) {
             throw new IllegalArgumentException("Row Index Out of Bounds");
         }
-        Car car = cars.get(rowIndex);
+        else if (rowIndex == cars.size())
+        {
+            car = new Car();
+            cars.add(car);
+        }
+        else
+            car = cars.get(rowIndex);
         switch (columnIndex) {
             case 1:
                 car.setModel((String) aValue);
@@ -120,7 +132,7 @@ public class CarsTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return true;
+        return ((columnIndex > 0) && (columnIndex < 5));
     }
     private static Comparator<Car> carByIDComparator = new Comparator<Car>() {
 

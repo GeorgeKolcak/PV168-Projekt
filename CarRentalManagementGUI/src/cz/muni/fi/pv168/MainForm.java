@@ -1,5 +1,6 @@
 package cz.muni.fi.pv168;
 
+import java.awt.event.ActionEvent;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,6 +13,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
+import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import org.apache.commons.dbcp.BasicDataSource;
@@ -19,7 +21,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 public class MainForm extends javax.swing.JFrame {
 
     private DataSource prepareDataSource() {
-        BasicDataSource ds = new BasicDataSource();
+        /*BasicDataSource ds = new BasicDataSource();
         Properties properties = new Properties();
         FileInputStream in = null;
         try {
@@ -42,6 +44,19 @@ public class MainForm extends javax.swing.JFrame {
         ds.setUrl(url);
         ds.setUsername(username);
         ds.setPassword(password);
+        return ds;*/
+        
+        ResourceBundle databaseProperties = ResourceBundle.getBundle("cz.muni.fi.pv168.database");
+        
+        String url = databaseProperties.getString("jdbc.url");
+        String username = databaseProperties.getString("jdbc.username");
+        String password = databaseProperties.getString("jdbc.password");
+        
+        BasicDataSource ds = new BasicDataSource();
+        ds.setUrl(url);
+        ds.setUsername(username);
+        ds.setPassword(password);
+        
         return ds;
     }
 
@@ -70,8 +85,8 @@ public class MainForm extends javax.swing.JFrame {
                     try {
                         customerManager.addCustomer(addCustomer);
                     } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("CAN_NOT_ADD_CUSTOMER"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("CAN_NOT_ADD_CUSTOMER"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                     return customerManager.getAllCustomers();
@@ -99,8 +114,8 @@ public class MainForm extends javax.swing.JFrame {
                     try {
                         customerManager.updateCustomerInfo(editCustomer);
                     } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("CAN_NOT_EDIT_CUSTOMER"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("CAN_NOT_EDIT_CUSTOMER"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
 
@@ -129,8 +144,8 @@ public class MainForm extends javax.swing.JFrame {
                         return null;
                     }
                 case FIND_CUSTOMER_BY_ID:
-                    String stringID = JOptionPane.showInputDialog(null, resourceBundle.getString("ENTER_CUSTOMER_ID")
-                            + ":", resourceBundle.getString("FIND"), JOptionPane.QUESTION_MESSAGE);
+                    String stringID = JOptionPane.showInputDialog(null, localization.getString("ENTER_CUSTOMER_ID")
+                            + ":", localization.getString("FIND"), JOptionPane.QUESTION_MESSAGE);
                     Long ID = -1L;
                     if (null == stringID) {
                         return null;
@@ -139,20 +154,20 @@ public class MainForm extends javax.swing.JFrame {
                     try {
                         ID = Long.parseLong(stringID);
                     } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("WRONG_NUMBER_INPUT"));
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("WRONG_NUMBER_INPUT"));
                         return null;
                     }
                     Customer foundCustomer = null;
                     try {
                         foundCustomer = customerManager.findCustomerByID(ID);
                         if (null == foundCustomer) {
-                            JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("WRONG_CUSTOMER_ID"),
-                                    resourceBundle.getString("NOT_FOUND"), JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(rootPane, localization.getString("WRONG_CUSTOMER_ID"),
+                                    localization.getString("NOT_FOUND"), JOptionPane.INFORMATION_MESSAGE);
                             return null;
                         }
                     } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("WRONG_CUSTOMER_ID"),
-                                resourceBundle.getString("NOT_FOUND"), JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("WRONG_CUSTOMER_ID"),
+                                localization.getString("NOT_FOUND"), JOptionPane.INFORMATION_MESSAGE);
                         return null;
                     }
 
@@ -164,12 +179,12 @@ public class MainForm extends javax.swing.JFrame {
                     try {
                         allCustomers = customerManager.getAllCustomers();
                     } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("ERROR_DB"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("ERROR_DB"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     } catch (RuntimeException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("ERROR_DB"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("ERROR_DB"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                     return allCustomers;
@@ -192,7 +207,7 @@ public class MainForm extends javax.swing.JFrame {
                         ex.getMessage(), JOptionPane.ERROR_MESSAGE);
             } catch (InterruptedException ex) {
                 customersAction = null;
-                throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                throw new IllegalStateException(localization.getString("INTERRUPTED"));
             }
             switch (customersAction) {
                 case ADD_CUSTOMER:
@@ -203,7 +218,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane, ex.getCause().getMessage(),
                                 ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                        throw new IllegalStateException(localization.getString("INTERRUPTED"));
                     }
                     break;
                 case EDIT_CUSTOMER:
@@ -214,7 +229,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane, ex.getCause().getMessage(),
                                 ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                        throw new IllegalStateException(localization.getString("INTERRUPTED"));
                     }
                     break;
 
@@ -226,7 +241,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane, ex.getCause().getMessage(),
                                 ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                        throw new IllegalStateException(localization.getString("INTERRUPTED"));
                     }
                     break;
 
@@ -238,7 +253,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane, ex.getCause().getMessage(),
                                 ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                        throw new IllegalStateException(localization.getString("INTERRUPTED"));
                     }
                     break;
                 case GET_ALL_CUSTOMERS:
@@ -249,7 +264,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane, ex.getCause().getMessage(),
                                 ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                        throw new IllegalStateException(localization.getString("INTERRUPTED"));
                     }
                     break;
                 default:
@@ -278,8 +293,8 @@ public class MainForm extends javax.swing.JFrame {
                         carManager.addCar(addCar);
 
                     } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("CAN_NOT_ADD_CAR"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("CAN_NOT_ADD_CAR"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                 case EDIT_CAR:
@@ -301,8 +316,8 @@ public class MainForm extends javax.swing.JFrame {
                     try {
                         carManager.updateCarInfo(editCar);
                     } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("CAN_NOT_UPDATE_CAR"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("CAN_NOT_UPDATE_CAR"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                     return carManager.getAllCars();
@@ -323,15 +338,15 @@ public class MainForm extends javax.swing.JFrame {
                         try {
                             carManager.removeCar(removeCar);
                         } catch (IllegalArgumentException ex) {
-                            JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("CAN_NOT_REMOVE_CAR"),
-                                    resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(rootPane, localization.getString("CAN_NOT_REMOVE_CAR"),
+                                    localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         }
                         return carManager.getAllCars();
                     } else {
                         return null;
                     }
                 case FIND_CAR_BY_ID:
-                    String stringID = JOptionPane.showInputDialog(null, resourceBundle.getString("ENTER_CAR_ID"), resourceBundle.getString("FIND"),
+                    String stringID = JOptionPane.showInputDialog(null, localization.getString("ENTER_CAR_ID"), localization.getString("FIND"),
                             JOptionPane.QUESTION_MESSAGE);
                     Long foundID = -1L;
                     if (null == stringID) {
@@ -340,21 +355,21 @@ public class MainForm extends javax.swing.JFrame {
                     try {
                         ID = Long.parseLong(stringID);
                     } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("WRONG_NUMBER_INPUT"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("WRONG_NUMBER_INPUT"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                     Car foundCar = null;
                     try {
                         foundCar = carManager.findCarByID(ID);
                         if (null == foundCar) {
-                            JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("WRONG_CAR_ID"),
-                                    resourceBundle.getString("NOT_FOUND"), JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(rootPane, localization.getString("WRONG_CAR_ID"),
+                                    localization.getString("NOT_FOUND"), JOptionPane.INFORMATION_MESSAGE);
                             return null;
                         }
                     } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("WRONG_CAR_ID"),
-                                resourceBundle.getString("NOT_FOUND"), JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("WRONG_CAR_ID"),
+                                localization.getString("NOT_FOUND"), JOptionPane.INFORMATION_MESSAGE);
                         return null;
                     }
                     List<Car> foundList = new ArrayList<>();
@@ -364,20 +379,20 @@ public class MainForm extends javax.swing.JFrame {
                     try {
                         return carManager.getAvailableCars();
                     } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("ERROR_DB"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("ERROR_DB"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                 case GET_ALL_CARS:
                     try {
                         return carManager.getAllCars();
                     } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("ERROR_DB"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("ERROR_DB"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     } catch (RuntimeException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("ERROR_DB"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("ERROR_DB"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                 default:
@@ -399,7 +414,7 @@ public class MainForm extends javax.swing.JFrame {
                 return;
             } catch (InterruptedException ex) {
                 carsAction = null;
-                throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                throw new IllegalStateException(localization.getString("INTERRUPTED"));
             }
             switch (carsAction) {
                 case ADD_CAR:
@@ -410,7 +425,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane,
                                 ex.getCause().getMessage(), ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                        throw new IllegalStateException(localization.getString("INTERRUPTED"));
                     }
                     break;
                 case EDIT_CAR:
@@ -421,7 +436,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane,
                                 ex.getCause().getMessage(), ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                        throw new IllegalStateException(localization.getString("INTERRUPTED"));
                     }
                     break;
                 case REMOVE_CAR:
@@ -432,7 +447,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane,
                                 ex.getCause().getMessage(), ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                        throw new IllegalStateException(localization.getString("INTERRUPTED"));
                     }
                     break;
                 case GET_ALL_AVAILABLE_CARS:
@@ -443,7 +458,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane,
                                 ex.getCause().getMessage(), ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                        throw new IllegalStateException(localization.getString("INTERRUPTED"));
                     }
                     break;
                 case GET_ALL_CARS:
@@ -454,7 +469,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane,
                                 ex.getCause().getMessage(), ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                        throw new IllegalStateException(localization.getString("INTERRUPTED"));
                     }
                     break;
                 default:
@@ -478,8 +493,8 @@ public class MainForm extends javax.swing.JFrame {
                                  * Text
                                  */);
                     } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("CAN_NOT_RENT_CAR"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("CAN_NOT_RENT_CAR"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
 
@@ -492,8 +507,8 @@ public class MainForm extends javax.swing.JFrame {
                                  * Date From Calendar
                                  */);
                     } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("CAN_NOT_ADD_RENT"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("CAN_NOT_ADD_RENT"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                     return rentManager.getAllRents();
@@ -507,33 +522,33 @@ public class MainForm extends javax.swing.JFrame {
                         try {
                             removeRentCustomer = customerManager.findCustomerByID(removeRentCustomerID);
                         } catch (IllegalArgumentException ex) {
-                            JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("CAN_NOT_FIND_CUSTOMER"),
-                                    resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(rootPane, localization.getString("CAN_NOT_FIND_CUSTOMER"),
+                                    localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                             return null;
                         }
                         Car removeRentCar = null;
                         try {
                             removeRentCar = carManager.findCarByID(removeRentCarID);
                         } catch (IllegalArgumentException ex) {
-                            JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("CAN_NOT_FIND_CAR"),
-                                    resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(rootPane, localization.getString("CAN_NOT_FIND_CAR"),
+                                    localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                             return null;
                         }
                         try {
                             rentManager.getCarFromCustomer(removeRentCar, removeRentCustomer);
                         } catch (IllegalArgumentException ex) {
-                            JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("ERROR_REMOVE_RENT"),
-                                    resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(rootPane, localization.getString("ERROR_REMOVE_RENT"),
+                                    localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                             return null;
                         }
                         return rentManager.getAllRents();
                     } else {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("CHOOSE_CAR"),
-                                resourceBundle.getString("ERROR"), JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("CHOOSE_CAR"),
+                                localization.getString("ERROR"), JOptionPane.INFORMATION_MESSAGE);
                         return null;
                     }
                 case GET_CUSTOMER_CARS:
-                    String stringID = JOptionPane.showInputDialog(null, resourceBundle.getString("ENTER_CUSTOMER_ID"), resourceBundle.getString("FIND"),
+                    String stringID = JOptionPane.showInputDialog(null, localization.getString("ENTER_CUSTOMER_ID"), localization.getString("FIND"),
                             JOptionPane.QUESTION_MESSAGE);
                     if (stringID == null) {
                         return null;
@@ -542,14 +557,14 @@ public class MainForm extends javax.swing.JFrame {
                     try {
                         customerID = Long.parseLong(stringID);
                     } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("WRONG_NUMBER_INPUT"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("WRONG_NUMBER_INPUT"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                     Customer customer = customerManager.findCustomerByID(customerID);
                     if (customer == null) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("CUSTOMER_ID_NOT_EXIST"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("CUSTOMER_ID_NOT_EXIST"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
 
@@ -561,8 +576,8 @@ public class MainForm extends javax.swing.JFrame {
                     return allCustomerCars;
 
                 case GET_CUSTOMER_WITH_CAR:
-                    String string = JOptionPane.showInputDialog(null, resourceBundle.getString("ENTER_CUSTOMER_ID"),
-                            resourceBundle.getString("FIND"), JOptionPane.QUESTION_MESSAGE);
+                    String string = JOptionPane.showInputDialog(null, localization.getString("ENTER_CUSTOMER_ID"),
+                            localization.getString("FIND"), JOptionPane.QUESTION_MESSAGE);
                     if (null == string) {
                         return null;
                     }
@@ -570,19 +585,19 @@ public class MainForm extends javax.swing.JFrame {
                     try {
                         ID = Long.parseLong(string);
                     } catch (NumberFormatException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("WRONG_NUMBER_INPUT"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("WRONG_NUMBER_INPUT"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                     Car car = carManager.findCarByID(ID);
                     if (null == car) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("CAR_ID_NOT_EXIST"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("CAR_ID_NOT_EXIST"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                     if (car.getAvailable() == true || rentManager.findCustomerWithCar(car) == null) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("CAR_NOT_RENTED"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("CAR_NOT_RENTED"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
 
@@ -595,12 +610,12 @@ public class MainForm extends javax.swing.JFrame {
                     try {
                         return rentManager.getAllRents();
                     } catch (IllegalArgumentException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("ERROR_DB"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("ERROR_DB"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     } catch (RuntimeException ex) {
-                        JOptionPane.showMessageDialog(rootPane, resourceBundle.getString("ERROR_DB"),
-                                resourceBundle.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(rootPane, localization.getString("ERROR_DB"),
+                                localization.getString("ERROR"), JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                 default:
@@ -622,7 +637,7 @@ public class MainForm extends javax.swing.JFrame {
                 return;
             } catch (InterruptedException ex) {
                 rentsAction = null;
-                throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                throw new IllegalStateException(localization.getString("INTERRUPTED"));
             }
             switch (rentsAction) {
                 case ADD_RENT:
@@ -633,7 +648,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane,
                                 ex.getCause().getMessage(), ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                        throw new IllegalStateException(localization.getString("INTERRUPTED"));
                     }
                     // update 
                     customersAction = CustomersActions.GET_ALL_CUSTOMERS;
@@ -648,7 +663,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane,
                                 ex.getCause().getMessage(), ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                        throw new IllegalStateException(localization.getString("INTERRUPTED"));
                     }
                     break;
                 case GET_CUSTOMER_WITH_CAR:
@@ -659,7 +674,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane,
                                 ex.getCause().getMessage(), ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("INTERRUPTED"));
+                        throw new IllegalStateException(localization.getString("INTERRUPTED"));
                     }
                     break;
                 case GET_ALL_RENTS:
@@ -670,7 +685,7 @@ public class MainForm extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(rootPane,
                                 ex.getCause().getMessage(), ex.getMessage(), JOptionPane.ERROR_MESSAGE);
                     } catch (InterruptedException ex) {
-                        throw new IllegalStateException(resourceBundle.getString("interrupted"));
+                        throw new IllegalStateException(localization.getString("interrupted"));
                     }
                     break;
                 default:
@@ -681,7 +696,6 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     public MainForm() {
-        resourceBundle = RESOURCE_BUNDLE;
         initComponents();
         carManager.setDataSource(dataSource);
         customerManager.setDataSource(dataSource);
@@ -696,17 +710,22 @@ public class MainForm extends javax.swing.JFrame {
         customerManager.setLogger(fs);
         rentManager.setLogger(fs);
 
-        // some how set buttons
-        customersAction = CustomersActions.GET_ALL_CUSTOMERS;
-        carsAction = CarsActions.GET_ALL_CARS;
-        rentsAction = RentsActions.GET_ALL_RENTS;
-        CustomerSwingWorker customerSwingWorker = new CustomerSwingWorker();
-        customerSwingWorker.execute();
-        CarSwingWorker carSwingWorker = new CarSwingWorker();
-        carSwingWorker.execute();
-        RentalSwingWorker rentalSwingWorker = new RentalSwingWorker();
-        rentalSwingWorker.execute();
-
+        jTabbedPane1.setTitleAt(0, localization.getString("cars"));
+        jTabbedPane1.setTitleAt(1, localization.getString("customers"));
+        jTabbedPane1.setTitleAt(2, localization.getString("rent"));
+        
+        carTable.setModel(new CarsTableModel(localization));
+        customerTable.setModel(new CustomersTableModel(localization));
+        rentTable.setModel(new RentsTableModel(localization));
+        
+        jMenuItem3.setAction(new ExitAction(localization.getString("exit")));
+        jMenuItem7.setAction(new AddRentAction(localization.getString("rent")));
+        jMenuItem8.setAction(new AddCarAction(localization.getString("car")));
+        jMenuItem18.setAction(new AddCustomerAction(localization.getString("customer")));
+        
+        jButton2.setAction(new AddCarAction(localization.getString("new_car")));
+        jButton3.setAction(new AddCustomerAction(localization.getString("new_customer")));
+        jButton4.setAction(new AddRentAction(localization.getString("new_rent")));
     }
 
     /**
@@ -722,12 +741,12 @@ public class MainForm extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         jDesktopPane1 = new javax.swing.JDesktopPane();
         jTabbedPane1 = new javax.swing.JTabbedPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        carTable = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         customerTable = new javax.swing.JTable();
         jScrollPane4 = new javax.swing.JScrollPane();
         rentTable = new javax.swing.JTable();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        carTable = new javax.swing.JTable();
         jProgressBar1 = new javax.swing.JProgressBar();
         mainToolBar = new javax.swing.JToolBar();
         jButton2 = new javax.swing.JButton();
@@ -776,6 +795,70 @@ public class MainForm extends javax.swing.JFrame {
 
         jTabbedPane1.setName("tabPanel");
         jTabbedPane1.setPreferredSize(new java.awt.Dimension(985, 600));
+
+        carTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null},
+                {null, null, null, null, null, null}
+            },
+            new String [] {
+                "ID", "Model", "Colour", "License Plate", "Price", "Available"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Long.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Boolean.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true, true, true, true, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        carTable.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        carTable.setRequestFocusEnabled(false);
+        carTable.setSelectionBackground(new java.awt.Color(153, 102, 255));
+        jScrollPane2.setViewportView(carTable);
+
+        jTabbedPane1.addTab("Cars", jScrollPane2);
 
         customerTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -905,70 +988,6 @@ public class MainForm extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Car Rents", jScrollPane4);
 
-        carTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
-            },
-            new String [] {
-                "ID", "Model", "Colour", "License Plate", "Price", "Available"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Long.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Boolean.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        carTable.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        carTable.setRequestFocusEnabled(false);
-        carTable.setSelectionBackground(new java.awt.Color(153, 102, 255));
-        jScrollPane2.setViewportView(carTable);
-
-        jTabbedPane1.addTab("Cars", jScrollPane2);
-
         jTabbedPane1.setBounds(0, 25, 985, 600);
         jDesktopPane1.add(jTabbedPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -987,11 +1006,6 @@ public class MainForm extends javax.swing.JFrame {
         jButton2.setLabel("New Car");
         jButton2.setName("");
         jButton2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
         mainToolBar.add(jButton2);
 
         jButton3.setText("New Customer");
@@ -999,11 +1013,6 @@ public class MainForm extends javax.swing.JFrame {
         jButton3.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton3.setName("");
         jButton3.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
-            }
-        });
         mainToolBar.add(jButton3);
 
         jButton4.setText("New Lease");
@@ -1012,11 +1021,6 @@ public class MainForm extends javax.swing.JFrame {
         jButton4.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton4.setName("");
         jButton4.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
         mainToolBar.add(jButton4);
 
         jSeparator3.setMinimumSize(new java.awt.Dimension(200, 0));
@@ -1059,6 +1063,11 @@ public class MainForm extends javax.swing.JFrame {
         jButton9.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton9.setName("");
         jButton9.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
         mainToolBar.add(jButton9);
 
         jButton8.setText("Sort");
@@ -1101,11 +1110,7 @@ public class MainForm extends javax.swing.JFrame {
 
         jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem3.setText("Exit");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
-            }
-        });
+        jMenuItem3.setName("exitMenuItem");
         jMenu1.add(jMenuItem3);
 
         jMenuBar1.add(jMenu1);
@@ -1142,11 +1147,6 @@ public class MainForm extends javax.swing.JFrame {
         jMenu5.setText("Language");
 
         jMenuItem14.setText("Česky");
-        jMenuItem14.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem14ActionPerformed(evt);
-            }
-        });
         jMenu5.add(jMenuItem14);
 
         jMenuItem13.setText("Deutch");
@@ -1195,38 +1195,106 @@ public class MainForm extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private class ExitAction extends AbstractAction
+    {
+        public ExitAction(String string) {
+            super(string);
+        }
 
-        NewCarForm addCarForm = new NewCarForm();
-        addCarForm.toFront();
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-
-        NewCustomerForm addCustomerForm = new NewCustomerForm();
-        addCustomerForm.toFront();
-    }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        NewRentForm addRentForm = new NewRentForm();
-        addRentForm.toFront();
-    }//GEN-LAST:event_jButton4ActionPerformed
-
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            System.exit(0);
+        }
+    }
+    
+    private class AddCarAction extends AbstractAction
+    {
+        public AddCarAction(String string)
+        {
+            super(string);
+        }
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            NewCarForm addCarForm = new NewCarForm();
+            addCarForm.setVisible(true);
+            addCarForm.toFront();
+        }
+    }
+    
+    private class AddCustomerAction extends AbstractAction
+    {
+        public AddCustomerAction(String string)
+        {
+            super(string);
+        }
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            NewCustomerForm addCustomerForm = new NewCustomerForm();
+            addCustomerForm.setVisible(true);
+            addCustomerForm.toFront();
+        }
+    }
+    
+    private class AddRentAction extends AbstractAction
+    {
+        public AddRentAction(String string)
+        {
+            super(string);
+        }
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            NewRentForm addRentForm = new NewRentForm();
+            addRentForm.setVisible(true);
+            addRentForm.toFront();
+        }
+    }
+    
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         dataSource = prepareDataSource();
+        
+        customersAction = CustomersActions.GET_ALL_CUSTOMERS;
+        carsAction = CarsActions.GET_ALL_CARS;
+        rentsAction = RentsActions.GET_ALL_RENTS;
+        CustomerSwingWorker customerSwingWorker = new CustomerSwingWorker();
+        customerSwingWorker.execute();
+        CarSwingWorker carSwingWorker = new CarSwingWorker();
+        carSwingWorker.execute();
+        RentalSwingWorker rentalSwingWorker = new RentalSwingWorker();
+        rentalSwingWorker.execute();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         dataSource = null;
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
-
-    private void jMenuItem14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem14ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem14ActionPerformed
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        switch (jTabbedPane1.getSelectedIndex())
+        {
+            case 0:
+            {
+                String query = jTextField2.getText();
+                
+                break;
+            }
+            case 1:
+            {
+                //search customers
+                break;
+            }
+            case 2:
+            {
+                //search rents
+                break;
+            }
+        }
+    }//GEN-LAST:event_jButton9ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1334,8 +1402,8 @@ public class MainForm extends javax.swing.JFrame {
 
         ADD_RENT, REMOVE_RENT, EDIT_RENT, GET_CUSTOMER_CARS, GET_CUSTOMER_WITH_CAR, GET_ALL_RENTS;
     };
-    public static final ResourceBundle RESOURCE_BUNDLE = null;//ResourceBundle.getBundle("cz/muni/fi/pv168/CarRentalManagementGUI/localization", new Locale("cs", "CZ"));
-    private ResourceBundle resourceBundle;
+    
+    private ResourceBundle localization = ResourceBundle.getBundle("cz.muni.fi.pv168.localization");
     private DataSource dataSource = null;
     private CarManager carManager = new CarManagerImplementation();
     private CustomerManager customerManager = new CustomerManagerImplementation();

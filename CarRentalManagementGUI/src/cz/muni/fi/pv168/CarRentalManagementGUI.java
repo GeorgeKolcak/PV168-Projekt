@@ -8,10 +8,10 @@ public class CarRentalManagementGUI
 {
     public static void main(String[] args)
     {
-        new NewCarForm().setVisible(true);
-        new NewCustomerForm().setVisible(true);
-        new NewRentForm().setVisible(true);
-        new DatabaseConnectionForm().setVisible(true);
+//        new NewCarForm().setVisible(true);
+//        new NewCustomerForm().setVisible(true);
+//        new NewRentForm().setVisible(true);
+//        new DatabaseConnectionForm().setVisible(true);
         
         MainForm mainForm = new MainForm();
         

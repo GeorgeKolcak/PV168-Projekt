@@ -6,7 +6,12 @@ import javax.swing.table.AbstractTableModel;
 public class CustomersTableModel extends AbstractTableModel {
 
     List<Customer> customers = new ArrayList<>();
-    private ResourceBundle resourceBundle = MainForm.RESOURCE_BUNDLE;
+    private ResourceBundle localization;
+
+    public CustomersTableModel(ResourceBundle localization)
+    {
+        this.localization = localization;
+    }
 
     public void updateCustomers(List<Customer> newCustomers) {
         if (null == newCustomers) {
@@ -24,7 +29,7 @@ public class CustomersTableModel extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-        return customers.size();
+        return (customers.size() + 1);
     }
 
     @Override
@@ -56,17 +61,17 @@ public class CustomersTableModel extends AbstractTableModel {
             case 0:
                 return "ID";
             case 1:
-                return resourceBundle.getString("FIRST_NAME");
+                return localization.getString("first_name");
             case 2:
-                return resourceBundle.getString("LAST_NAME");
+                return localization.getString("surname");
             case 3:
-                return resourceBundle.getString("ADDRESS");
+                return localization.getString("address");
             case 4:
-                return resourceBundle.getString("PHONE_NUMBER");
+                return localization.getString("phone_number");
             case 5:
-                return resourceBundle.getString("DRIVERS_LICENSE");
+                return localization.getString("driver_license");
             case 6:
-                return resourceBundle.getString("ACTIVE");
+                return localization.getString("active");
             default:
                 throw new IllegalArgumentException("Column");
         }
@@ -74,25 +79,25 @@ public class CustomersTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        if (rowIndex >= customers.size()) {
+        if (rowIndex > customers.size()) {
             throw new IllegalArgumentException("Row Index Out Of Bounds.");
         }
-        Customer customer = customers.get(rowIndex);
+        Customer customer = ((rowIndex == customers.size()) ? null : customers.get(rowIndex));
         switch (columnIndex) {
             case 0:
-                return customer.getID();
+                return (((rowIndex == customers.size()) || (customer.getID() == null)) ? 0 : customer.getID());
             case 1:
-                return customer.getFirstName();
+                return (((rowIndex == customers.size()) || (customer.getFirstName() == null)) ? "" : customer.getFirstName());
             case 2:
-                return customer.getLastName();
+                return (((rowIndex == customers.size()) || (customer.getLastName() == null)) ? "" : customer.getLastName());
             case 3:
-                return customer.getAddress();
+                return (((rowIndex == customers.size()) || (customer.getAddress() == null)) ? "" : customer.getAddress());
             case 4:
-                return customer.getPhoneNumber();
+                return (((rowIndex == customers.size()) || (customer.getPhoneNumber() == null)) ? "" : customer.getPhoneNumber());
             case 5:
-                return customer.getDriversLicense();
+                return (((rowIndex == customers.size()) || (customer.getDriversLicense() == null)) ? "" : customer.getDriversLicense());
             case 6:
-                return customer.getActive();
+                return ((rowIndex != customers.size()) && customer.getActive());
             default:
                 throw new IllegalArgumentException("Column Index");
         }
@@ -100,10 +105,17 @@ public class CustomersTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        Customer customer = null;
         if (rowIndex > customers.size()) {
             throw new IllegalArgumentException("Row Index Out of Bounds");
         }
-        Customer customer = customers.get(rowIndex);
+        else if (rowIndex == customers.size())
+        {
+            customer = new Customer();
+            customers.add(customer);
+        }
+        else
+            customer = customers.get(rowIndex);
         switch (columnIndex) {
             case 1:
                 customer.setFirstName((String) aValue);
@@ -127,7 +139,7 @@ public class CustomersTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return true;
+        return ((columnIndex > 0) && (columnIndex < 6));
     }
     private static Comparator<Customer> CustomerByIDComparator = new Comparator<Customer>() {
 

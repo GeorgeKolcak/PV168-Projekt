@@ -7,7 +7,12 @@ import javax.swing.table.AbstractTableModel;
 public class RentsTableModel extends AbstractTableModel {
 
     List<Rent> rents = new ArrayList<>();
-    private ResourceBundle resourceBundle = MainForm.RESOURCE_BUNDLE;
+    private ResourceBundle localization;
+    
+    public RentsTableModel(ResourceBundle localization)
+    {
+        this.localization = localization;
+    }
 
     public void updateRents(List<Rent> newInventories) {
         if (null == newInventories) {
@@ -54,13 +59,13 @@ public class RentsTableModel extends AbstractTableModel {
             case 0:
                 return "ID";
             case 1:
-                return resourceBundle.getString("CAR_ID");
+                return (localization.getString("car") + " ID");
             case 2:
-                return resourceBundle.getString("CUSTOMER ID");
+                return (localization.getString("customer") + " ID");
             case 3:
-                return resourceBundle.getString("RENT_DATE");
+                return localization.getString("rent_date");
             case 4:
-                return resourceBundle.getString("DUE_DATE");
+                return localization.getString("due_date");
             default:
                 throw new IllegalArgumentException("Column");
 
@@ -115,7 +120,7 @@ public class RentsTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return true;
+        return false;
     }
     private static Comparator<Rent> rentByIDComparator = new Comparator<Rent>() {
 
