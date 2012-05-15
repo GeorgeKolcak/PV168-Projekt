@@ -1,13 +1,11 @@
 package cz.muni.fi.pv168;
 
+import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -706,6 +704,7 @@ public class MainForm extends javax.swing.JFrame {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
         carManager.setLogger(fs);
         customerManager.setLogger(fs);
         rentManager.setLogger(fs);
@@ -1204,6 +1203,24 @@ public class MainForm extends javax.swing.JFrame {
         @Override
         public void actionPerformed(ActionEvent e)
         {
+            if (!((CarsTableModel)carTable.getModel()).getUpdatedCars().isEmpty() ||
+                ((CarsTableModel)carTable.getModel()).hasNewCars())
+            {
+                if (JOptionPane.showConfirmDialog(jMenu1,
+                        localization.getString("unsaved_cars_message"),
+                        localization.getString("uncommited_changes"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
+                    return;
+            }
+            
+            if (!((CustomersTableModel)customerTable.getModel()).getUpdatedCustomers().isEmpty() ||
+                ((CustomersTableModel)customerTable.getModel()).hasNewCustomers())
+            {
+                if (JOptionPane.showConfirmDialog(jMenu1,
+                        localization.getString("unsaved_customers_message"),
+                        localization.getString("uncommited_changes"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
+                    return;
+            }
+            
             System.exit(0);
         }
     }

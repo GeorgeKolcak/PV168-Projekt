@@ -6,7 +6,7 @@ import javax.swing.table.AbstractTableModel;
 
 public class RentsTableModel extends AbstractTableModel {
 
-    List<Rent> rents = new ArrayList<>();
+    private List<Rent> rents = new ArrayList<>();
     private ResourceBundle localization;
     
     public RentsTableModel(ResourceBundle localization)

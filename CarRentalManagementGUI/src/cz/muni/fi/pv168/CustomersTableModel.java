@@ -5,12 +5,30 @@ import javax.swing.table.AbstractTableModel;
 
 public class CustomersTableModel extends AbstractTableModel {
 
-    List<Customer> customers = new ArrayList<>();
+    private List<Customer> customers = new ArrayList<>();
     private ResourceBundle localization;
+    
+    private Set<Long> updatedCustomers;
+    
+    public Set<Long> getUpdatedCustomers()
+    {
+        return Collections.unmodifiableSet(updatedCustomers);
+    }
+    
+    public boolean hasNewCustomers()
+    {
+        for (Customer c : customers)
+            if (c.getID() == null)
+                return true;
+        
+        return false;
+    }
 
     public CustomersTableModel(ResourceBundle localization)
     {
         this.localization = localization;
+        
+        updatedCustomers = new HashSet<>();
     }
 
     public void updateCustomers(List<Customer> newCustomers) {
@@ -118,20 +136,40 @@ public class CustomersTableModel extends AbstractTableModel {
             customer = customers.get(rowIndex);
         switch (columnIndex) {
             case 1:
+            {
+                if (customer.getID() != null)
+                    updatedCustomers.add(customer.getID());
                 customer.setFirstName((String) aValue);
                 break;
+            }
             case 2:
+            {
+                if (customer.getID() != null)
+                    updatedCustomers.add(customer.getID());
                 customer.setLastName((String) aValue);
                 break;
+            }
             case 3:
+            {
+                if (customer.getID() != null)
+                    updatedCustomers.add(customer.getID());
                 customer.setAddress((String) aValue);
                 break;
+            }
             case 4:
+            {
+                if (customer.getID() != null)
+                    updatedCustomers.add(customer.getID());
                 customer.setPhoneNumber((String) aValue);
                 break;
+            }
             case 5:
+            {
+                if (customer.getID() != null)
+                    updatedCustomers.add(customer.getID());
                 customer.setDriversLicense((String) aValue);
                 break;
+            }
             default:
                 throw new IllegalArgumentException("Column Index");
         }

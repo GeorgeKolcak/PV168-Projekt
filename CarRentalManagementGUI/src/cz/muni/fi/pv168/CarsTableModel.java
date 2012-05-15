@@ -5,12 +5,30 @@ import javax.swing.table.AbstractTableModel;
 
 public class CarsTableModel extends AbstractTableModel {
 
-    List<Car> cars = new ArrayList<>();
+    private List<Car> cars = new ArrayList<>();
     private ResourceBundle localization;
+    
+    private Set<Long> updatedCars;
+    
+    public Set<Long> getUpdatedCars()
+    {
+        return Collections.unmodifiableSet(updatedCars);
+    }
+    
+    public boolean hasNewCars()
+    {
+        for (Car c : cars)
+            if (c.getID() == null)
+                return true;
+        
+        return false;
+    }
 
     public CarsTableModel(ResourceBundle localization)
     {
         this.localization = localization;
+        
+        updatedCars = new HashSet<>();
     }
     
     public void updateCars(List<Car> newCars) {
@@ -115,16 +133,33 @@ public class CarsTableModel extends AbstractTableModel {
             car = cars.get(rowIndex);
         switch (columnIndex) {
             case 1:
+            {
+                if (car.getID() != null)
+                    updatedCars.add(car.getID());
                 car.setModel((String) aValue);
                 break;
+            }
             case 2:
+            {
+                if (car.getID() != null)
+                    updatedCars.add(car.getID());
                 car.setColor((String) aValue);
                 break;
+            }
             case 3:
+            {
+                if (car.getID() != null)
+                    updatedCars.add(car.getID());
                 car.setLicensePlate((String) aValue);
+                break;
+            }
             case 4:
+            {
+                if (car.getID() != null)
+                    updatedCars.add(car.getID());
                 car.setRentalPayment((Double) aValue);
                 break;
+            }
             default:
                 throw new IllegalArgumentException("Column Index");
         }
