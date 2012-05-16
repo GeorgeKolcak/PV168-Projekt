@@ -50,6 +50,7 @@ public class CarManagerImplementation implements CarManager {
             }
             Long ID = DBUtils.getID(statement.getGeneratedKeys());
             car.setID(ID);
+            logger.log(Level.INFO, ("New Car ID " + car.getID() + " added"));
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Error when INSERT Car into DB" + car, ex);
             throw new TransactionException("Error when INSERT Car into DB" + car, ex);

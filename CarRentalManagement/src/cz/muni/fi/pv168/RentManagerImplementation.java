@@ -165,6 +165,46 @@ public class RentManagerImplementation implements RentManager {
             customer.setActive(Boolean.TRUE);
             carManager.updateCarInfo(car);
             customerManager.updateCustomerInfo(customer);
+            Long ID = DBUtils.getID(statement.getGeneratedKeys());
+            logger.log(Level.INFO, ("New Rent ID " + ID + " added"));
+        } catch (SQLException ex) {
+            logger.log(Level.SEVERE, "Error when renting car to customer in RentDB", ex);
+            throw new TransactionException("Error when renting car to customer in RentDB", ex);
+        } finally {
+            DBUtils.closeQuietly(connection);
+        }
+    }
+    
+    @Override
+    public void rentCarToCustomer(Rent rent) throws IllegalArgumentException, TransactionException {
+        if ((null == rent.getCarID()) || (null == rent.getCustomerID())) {
+            throw new IllegalArgumentException("Can't insert null entry to DB");
+        }
+        
+        Car car = carManager.findCarByID(rent.getCarID());
+        Customer customer = customerManager.findCustomerByID(rent.getCustomerID());
+        
+        if (!car.getAvailable()) {
+            throw new IllegalArgumentException("Car is already rented");
+        }
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement("INSERT INTO RENTS (car, customer, rent_date, due_date) VALUES (?,?,?,?)");
+            statement.setLong(1, car.getID());
+            statement.setLong(2, customer.getID());
+            statement.setDate(3, rent.getRentDate());
+            statement.setDate(4, rent.getDueDate());
+            if (1 != statement.executeUpdate()) {
+                throw new TransactionException("Cant INSERT Rent to RentDB");
+            }
+            car.setStatus(Boolean.FALSE);
+            customer.setActive(Boolean.TRUE);
+            carManager.updateCarInfo(car);
+            customerManager.updateCustomerInfo(customer);
+            Long ID = DBUtils.getID(statement.getGeneratedKeys());
+            logger.log(Level.INFO, ("New Rent ID " + ID + " added"));
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Error when renting car to customer in RentDB", ex);
             throw new TransactionException("Error when renting car to customer in RentDB", ex);
@@ -210,6 +250,44 @@ public class RentManagerImplementation implements RentManager {
 
     }
 
+    @Override
+    public void getCarFromCustomer(Rent rent) throws IllegalArgumentException, TransactionException {
+        if ((null == rent.getCarID()) || (null == rent.getCustomerID())) {
+            throw new IllegalArgumentException("Can't use NULL entry");
+        }
+        
+        Car car = carManager.findCarByID(rent.getCarID());
+        Customer customer = customerManager.findCustomerByID(rent.getCustomerID());
+        
+        if (!customer.getActive()) {
+            throw new IllegalArgumentException("Customer is not active");
+        }
+        Connection connection = null;
+        PreparedStatement statement = null;
+        try {
+            connection = dataSource.getConnection();
+            statement = connection.prepareStatement("DELETE FROM RENTS WHERE customer=? AND car=?");
+            statement.setLong(1, customer.getID());
+            statement.setLong(2, car.getID());
+
+            if (0 == statement.executeUpdate()) {
+                throw new TransactionException("Rent not found");
+            }
+            if (getAllCustomerCars(customer).isEmpty()) {
+                customer.setActive(Boolean.FALSE);
+            }
+            car.setStatus(true);
+            customerManager.updateCustomerInfo(customer);
+            carManager.updateCarInfo(car);
+        } catch (SQLException ex) {
+            logger.log(Level.SEVERE, "Error when DELETE from DB", ex);
+            throw new TransactionException("Error when DELETE from DB", ex);
+        } finally {
+            DBUtils.closeQuietly(connection);
+        }
+
+    }
+    
     private Rent getRentFromResultSet(ResultSet resultSet) throws SQLException {
         Rent rent = new Rent();
         rent.setID(resultSet.getLong("ID"));

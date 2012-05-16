@@ -191,6 +191,6 @@ public class CarsTableModel extends AbstractTableModel {
     {
         car.setStatus(true);
         cars.add(car);
-        fireTableDataChanged();
+        fireTableRowsInserted((cars.size() - 1), cars.size());
     }
 }

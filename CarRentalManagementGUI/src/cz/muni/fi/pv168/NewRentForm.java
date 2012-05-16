@@ -5,6 +5,11 @@
 package cz.muni.fi.pv168;
 
 import java.sql.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.ResourceBundle;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -12,33 +17,55 @@ import java.sql.Date;
  */
 public class NewRentForm extends javax.swing.JFrame {
 
-    Long carID;
-    Long customerID;
-    Date rentDate;
-    Date dueDate;
-    int duration;
-
-    public void setCarID(Long carID) {
-        this.carID = carID;
-    }
-
-    public void setCustomerID(Long customerID) {
-        this.customerID = customerID;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public void setRentDate(Date rentDate) {
-        this.rentDate = rentDate;
-    }
-
+    private RentsTableModel table;
+    
+    private ResourceBundle localization;
+    
+    private MainForm.RentValidatorSwingWorker worker;
+    
     /**
      * Creates new form NewRentForm
      */
-    public NewRentForm() {
+    public NewRentForm(RentsTableModel rtm, ResourceBundle localization, MainForm.RentValidatorSwingWorker worker) {
         initComponents();
+        
+        table = rtm;
+        this.localization = localization;
+        this.worker = worker;
+        
+        this.setTitle(localization.getString("new_rent"));
+        
+        jLabel1.setText((localization.getString("car") + "ID:"));
+        jLabel2.setText((localization.getString("customer") + "ID:"));
+        jLabel3.setText((localization.getString("from") + ":"));
+        jLabel4.setText((localization.getString("for") + ":"));
+        jLabel5.setText(localization.getString("new_rent"));
+        jLabel6.setText(localization.getString("days"));
+        jComboBox1.setModel(new DefaultComboBoxModel(new String[] {
+                    localization.getString("january"),
+                    localization.getString("february"),
+                    localization.getString("march"),
+                    localization.getString("april"),
+                    localization.getString("may"),
+                    localization.getString("june"),
+                    localization.getString("july"),
+                    localization.getString("august"),
+                    localization.getString("september"),
+                    localization.getString("october"),
+                    localization.getString("november"),
+                    localization.getString("december"),
+                }));
+        
+        jButton2.setText(localization.getString("add"));
+        
+        jSpinner1.setValue(1);
+        jSpinner2.setValue(1);
+        
+        jSpinner3.setValue(1);
+        jComboBox1.setSelectedIndex(0);
+        jSpinner4.setValue(2012);
+        
+        jSpinner5.setValue(7);
     }
 
     /**
@@ -51,7 +78,6 @@ public class NewRentForm extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -59,8 +85,6 @@ public class NewRentForm extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         jSpinner1 = new javax.swing.JSpinner();
         jSpinner2 = new javax.swing.JSpinner();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
         jSpinner3 = new javax.swing.JSpinner();
         jSpinner4 = new javax.swing.JSpinner();
         jComboBox1 = new javax.swing.JComboBox();
@@ -70,9 +94,7 @@ public class NewRentForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Add New Label");
-        setPreferredSize(new java.awt.Dimension(450, 210));
-
-        jButton1.setText("Add and commit");
+        setPreferredSize(new java.awt.Dimension(450, 235));
 
         jButton2.setText("Add");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -94,10 +116,6 @@ public class NewRentForm extends javax.swing.JFrame {
         jSpinner1.setPreferredSize(new java.awt.Dimension(100, 20));
 
         jSpinner2.setPreferredSize(new java.awt.Dimension(100, 20));
-
-        jLabel7.setText("(name)");
-
-        jLabel8.setText("(model)");
 
         jSpinner3.setModel(new javax.swing.SpinnerNumberModel(1, 1, 31, 1));
         jSpinner3.setMinimumSize(new java.awt.Dimension(30, 20));
@@ -129,40 +147,35 @@ public class NewRentForm extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(jButton2)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jButton1))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2)
-                                .addComponent(jLabel3)
-                                .addComponent(jLabel1)
-                                .addComponent(jLabel4))
-                            .addGap(18, 18, 18)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel4))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(jLabel7))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
                                     .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(jLabel8))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(jSpinner3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addGroup(jPanel1Layout.createSequentialGroup()
-                                            .addComponent(jSpinner5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                            .addComponent(jLabel6)))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(jSpinner4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))))
-                .addContainerGap(30, Short.MAX_VALUE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addComponent(jSpinner3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jSpinner5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jLabel6)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jSpinner4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGap(0, 20, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton2)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,13 +185,11 @@ public class NewRentForm extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
+                    .addComponent(jSpinner1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
+                    .addComponent(jSpinner2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -189,11 +200,9 @@ public class NewRentForm extends javax.swing.JFrame {
                     .addComponent(jSpinner5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
                     .addComponent(jLabel6))
-                .addGap(33, 33, 33)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2))
-                .addGap(0, 13, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addComponent(jButton2)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -204,7 +213,9 @@ public class NewRentForm extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 32, Short.MAX_VALUE))
         );
 
         pack();
@@ -215,95 +226,60 @@ public class NewRentForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        customerID = (Long) jSpinner1.getValue();
-        carID = (Long) jSpinner2.getValue();
-        StringBuffer sb = new StringBuffer();
-        sb.append(jSpinner3.getValue());
-        if (((String) jSpinner4.getModel().getValue()).compareTo("January") == 0) {
-            sb.append("-01-");
+        Rent rent = new Rent();
+        
+        rent.setCarID(new Long((Integer)jSpinner2.getValue()));
+        rent.setCustomerID(new Long((Integer)jSpinner1.getValue()));
+        
+        int day = (Integer)jSpinner3.getValue();
+        int month = jComboBox1.getSelectedIndex();
+        int year = (Integer)jSpinner4.getValue();
+        
+        int duration = (Integer)jSpinner5.getValue();
+        if ((day < 0) || (day > getMonthDays(month, year)) || isInPast(day, month, year) || (duration == 0))
+        {
+            JOptionPane.showConfirmDialog(jPanel1,
+                    (localization.getString("incorrect_date")), localization.getString("invalid_input"),
+                    JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
+            return;
         }
-        if (((String) jSpinner4.getModel().getValue()).compareTo("February") == 0) {
-            sb.append("-02-");
-        }
-        if (((String) jSpinner4.getModel().getValue()).compareTo("March") == 0) {
-            sb.append("-03-");
-        }
-        if (((String) jSpinner4.getModel().getValue()).compareTo("April") == 0) {
-            sb.append("-04-");
-        }
-        if (((String) jSpinner4.getModel().getValue()).compareTo("May") == 0) {
-            sb.append("-05-");
-        }
-        if (((String) jSpinner4.getModel().getValue()).compareTo("June") == 0) {
-            sb.append("-06-");
-        }
-        if (((String) jSpinner4.getModel().getValue()).compareTo("July") == 0) {
-            sb.append("-07-");
-        }
-        if (((String) jSpinner4.getModel().getValue()).compareTo("August") == 0) {
-            sb.append("-08-");
-        }
-        if (((String) jSpinner4.getModel().getValue()).compareTo("September") == 0) {
-            sb.append("-09-");
-        }
-        if (((String) jSpinner4.getModel().getValue()).compareTo("October") == 0) {
-            sb.append("-10-");
-        }
-        if (((String) jSpinner4.getModel().getValue()).compareTo("November") == 0) {
-            sb.append("-11-");
-        }
-        if (((String) jSpinner4.getModel().getValue()).compareTo("December") == 0) {
-            sb.append("-12-");
-        }
-        sb.append(jSpinner5.getValue());
-        Date date = Date.valueOf(sb.toString());
-        rentDate = date;
-        //dueDate = rentDate + duration;
+        
+        Calendar cal = new GregorianCalendar(year, month, day);
+        rent.setRentDate(new Date(cal.getTime().getTime()));
+        cal.add(Calendar.DAY_OF_MONTH, duration);
+        rent.setDueDate(new Date(cal.getTime().getTime()));
+        
+        table.add(rent);
+        worker.setRent(rent);
+        
+        worker.execute();
+        
+        this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /*
-         * Set the Nimbus look and feel
-         */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /*
-         * If Nimbus (introduced in Java SE 6) is not available, stay with the
-         * default look and feel. For details see
-         * http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(NewRentForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NewRentForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NewRentForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NewRentForm.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+    private int getMonthDays(int month, int year)
+    {
+        if (((month < 7) && ((month % 2) == 0)) || ((month >= 7) && ((month % 2) == 1)))
+            return 31;
+        
+        if (month == 2)
+        {
+            if ((year % 4) == 0)
+                return 29;
+            
+            return 28;
         }
-        //</editor-fold>
-
-        /*
-         * Create and display the form
-         */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                new NewRentForm().setVisible(true);
-            }
-        });
+            
+        return 30;
     }
+    
+    private boolean isInPast(int day, int month, int year)
+    {
+        return new Date(new GregorianCalendar(year, month, day).getTime().getTime())
+                .before(new Date(Calendar.getInstance().getTime().getTime()));
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
@@ -312,8 +288,6 @@ public class NewRentForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JSpinner jSpinner2;

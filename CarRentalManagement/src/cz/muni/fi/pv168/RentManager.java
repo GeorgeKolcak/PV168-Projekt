@@ -12,8 +12,12 @@ public interface RentManager {
     public List<Car> getAllCustomerCars(Customer customer) throws IllegalArgumentException, TransactionException;
 
     public void rentCarToCustomer(Car car, Customer customer, Date rentDate, Date dueDate) throws IllegalArgumentException, TransactionException;
+    
+    public void rentCarToCustomer(Rent rent) throws IllegalArgumentException, TransactionException;
 
     public void getCarFromCustomer(Car car, Customer customer) throws IllegalArgumentException, TransactionException;
+    
+    public void getCarFromCustomer(Rent rent) throws IllegalArgumentException, TransactionException;
 
     public Rent findRentWithCar(Car car) throws IllegalArgumentException, TransactionException;
 

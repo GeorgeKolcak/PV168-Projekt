@@ -48,6 +48,7 @@ public class CustomerManagerImplementation implements CustomerManager {
             }
             Long ID = DBUtils.getID(statement.getGeneratedKeys());
             customer.setID(ID);
+            logger.log(Level.INFO, ("New Customer ID " + customer.getID() + " added"));
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Error INSERT Customer to DB", ex);
             throw new TransactionException("Error INSERT Customer to DB", ex);

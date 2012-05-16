@@ -4,6 +4,9 @@
  */
 package cz.muni.fi.pv168;
 
+import java.util.ResourceBundle;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Jooji
@@ -11,11 +14,24 @@ package cz.muni.fi.pv168;
 public class NewCarForm extends javax.swing.JFrame {
 
     private CarsTableModel table;
+    
+    private ResourceBundle localization;
 
-    public NewCarForm(CarsTableModel ctm) {
+    public NewCarForm(CarsTableModel ctm, ResourceBundle localization) {
         initComponents();
         
         table = ctm;
+        this.localization = localization;
+        
+        this.setTitle(localization.getString("new_car"));
+        
+        jLabel1.setText((localization.getString("colour") + ":"));
+        jLabel2.setText((localization.getString("model") + ":"));
+        jLabel3.setText((localization.getString("license_plate") + ":"));
+        jLabel4.setText((localization.getString("price") + ":"));
+        jLabel5.setText(localization.getString("new_car"));
+        
+        jButton2.setText(localization.getString("add"));
     }
 
     /**
@@ -49,11 +65,9 @@ public class NewCarForm extends javax.swing.JFrame {
             }
         });
 
-        jTextField1.setText("Colour");
         jTextField1.setPreferredSize(new java.awt.Dimension(200, 20));
         jTextField1.setSelectionColor(new java.awt.Color(153, 102, 255));
 
-        jTextField2.setText("Model");
         jTextField2.setPreferredSize(new java.awt.Dimension(200, 20));
         jTextField2.setSelectionColor(new java.awt.Color(153, 102, 255));
 
@@ -156,7 +170,17 @@ public class NewCarForm extends javax.swing.JFrame {
         car.setModel(jTextField2.getText());
         car.setColor(jTextField1.getText());
         car.setLicensePlate(jTextField3.getText());
-        car.setRentalPayment(Double.parseDouble(jTextField4.getText()));
+        
+        try
+        {
+            car.setRentalPayment(Double.parseDouble(jTextField4.getText()));
+        }
+        catch (NumberFormatException e)
+        {
+            JOptionPane.showConfirmDialog(jPanel1,
+                    (localization.getString("price") + " " + localization.getString("must_be_number")),
+                    localization.getString("invalid_input"), JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
+        }
         
         table.add(car);
         

@@ -28,6 +28,11 @@ public class CustomersTableModel extends AbstractTableModel {
         
         return false;
     }
+    
+    public void customerResolved(Customer customer)
+    {
+        updatedCustomers.remove(customer);
+    }
 
     public CustomersTableModel(ResourceBundle localization)
     {
@@ -194,7 +199,8 @@ public class CustomersTableModel extends AbstractTableModel {
     
     public void add(Customer customer)
     {
+        customer.setActive(false);
         customers.add(customer);
-        fireTableDataChanged();   
+        fireTableRowsInserted((customers.size() - 1), customers.size()); 
     }
 }

@@ -9,6 +9,8 @@ public class RentsTableModel extends AbstractTableModel {
     private List<Rent> rents = new ArrayList<>();
     private ResourceBundle localization;
     
+    private Map<Rent, Boolean> validRents = new HashMap<>();
+    
     public List<Rent> getRents()
     {
         return Collections.unmodifiableList(rents);
@@ -19,6 +21,28 @@ public class RentsTableModel extends AbstractTableModel {
         this.localization = localization;
     }
 
+    public void setValid(Rent rent)
+    {
+        validRents.put(rent, true);
+    }
+    
+    public boolean getValid(Rent rent)
+    {
+        if (validRents.containsKey(rent))
+            return validRents.get(rent);
+        
+        return false;
+    }
+    
+    public boolean hasNewRents()
+    {
+        for (Rent r : rents)
+            if (r.getID() == null)
+                return true;
+        
+        return false;
+    }
+    
     public void updateRents(List<Rent> newInventories) {
         if (null == newInventories) {
             return;
@@ -134,4 +158,10 @@ public class RentsTableModel extends AbstractTableModel {
             return Long.valueOf(rent1.getID()).compareTo(Long.valueOf(rent2.getID()));
         }
     };
+    
+    public void add(Rent rent)
+    {
+        rents.add(rent);
+        fireTableRowsInserted((rents.size() - 1), rents.size());
+    }
 }
