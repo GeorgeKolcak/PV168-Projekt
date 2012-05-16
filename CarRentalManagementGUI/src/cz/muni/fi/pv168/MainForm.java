@@ -749,6 +749,11 @@ public class MainForm extends javax.swing.JFrame {
         jButton2.setAction(new AddCarAction(localization.getString("new_car")));
         jButton3.setAction(new AddCustomerAction(localization.getString("new_customer")));
         jButton4.setAction(new AddRentAction(localization.getString("new_rent")));
+        
+        jMenu6.setText(localization.getString("remove"));
+        jMenuItem19.setText(localization.getString("car"));
+        jMenuItem20.setText(localization.getString("customer"));
+        jMenuItem21.setText(localization.getString("rent"));
     }
 
     /**
@@ -796,6 +801,10 @@ public class MainForm extends javax.swing.JFrame {
         jMenuItem8 = new javax.swing.JMenuItem();
         jMenuItem18 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
+        jMenu6 = new javax.swing.JMenu();
+        jMenuItem19 = new javax.swing.JMenuItem();
+        jMenuItem20 = new javax.swing.JMenuItem();
+        jMenuItem21 = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenu5 = new javax.swing.JMenu();
@@ -1051,24 +1060,27 @@ public class MainForm extends javax.swing.JFrame {
         jSeparator3.setSeparatorSize(new java.awt.Dimension(200, 0));
         mainToolBar.add(jSeparator3);
 
-        jButton5.setText("Copy");
+        jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cz/muni/fi/pv168/copy_icon.png"))); // NOI18N
         jButton5.setFocusable(false);
         jButton5.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton5.setName("");
+        jButton5.setPreferredSize(new java.awt.Dimension(25, 25));
         jButton5.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(jButton5);
 
-        jButton6.setText("Cut");
+        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cz/muni/fi/pv168/cut_icon.png"))); // NOI18N
         jButton6.setFocusable(false);
         jButton6.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton6.setName("");
+        jButton6.setPreferredSize(new java.awt.Dimension(25, 25));
         jButton6.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(jButton6);
 
-        jButton7.setText("Paste");
+        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/cz/muni/fi/pv168/paste_icon.png"))); // NOI18N
         jButton7.setFocusable(false);
         jButton7.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton7.setName("");
+        jButton7.setPreferredSize(new java.awt.Dimension(25, 25));
         jButton7.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         mainToolBar.add(jButton7);
 
@@ -1156,6 +1168,19 @@ public class MainForm extends javax.swing.JFrame {
         jMenu3.add(jMenuItem7);
 
         jMenu2.add(jMenu3);
+
+        jMenu6.setText("jMenu6");
+
+        jMenuItem19.setText("jMenuItem19");
+        jMenu6.add(jMenuItem19);
+
+        jMenuItem20.setText("jMenuItem20");
+        jMenu6.add(jMenuItem20);
+
+        jMenuItem21.setText("jMenuItem21");
+        jMenu6.add(jMenuItem21);
+
+        jMenu2.add(jMenu6);
 
         jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem4.setText("Sort");
@@ -1259,7 +1284,7 @@ public class MainForm extends javax.swing.JFrame {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            NewCarForm addCarForm = new NewCarForm();
+            NewCarForm addCarForm = new NewCarForm((CarsTableModel)carTable.getModel());
             addCarForm.setVisible(true);
             addCarForm.toFront();
         }
@@ -1371,7 +1396,7 @@ public class MainForm extends javax.swing.JFrame {
         }
     }
     
-    public boolean isValid(Car car)
+    public static boolean isValid(Car car)
     {
         return ((car.getModel() != null) && !car.getModel().isEmpty() && (car.getColor() != null) &&
                 !car.getColor().isEmpty() && (car.getLicensePlate() != null) && (car.getLicensePlate().length() > 6) &&
@@ -1466,6 +1491,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
     private javax.swing.JMenu jMenu5;
+    private javax.swing.JMenu jMenu6;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem10;
@@ -1477,7 +1503,10 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem16;
     private javax.swing.JMenuItem jMenuItem17;
     private javax.swing.JMenuItem jMenuItem18;
+    private javax.swing.JMenuItem jMenuItem19;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem20;
+    private javax.swing.JMenuItem jMenuItem21;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
