@@ -1967,7 +1967,7 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         ADD_RENT, REMOVE_RENT, EDIT_RENT, GET_CUSTOMER_CARS, GET_CUSTOMER_WITH_CAR, GET_ALL_RENTS, SEARCH_RENTS
     };
     
-    private ResourceBundle localization = ResourceBundle.getBundle("cz.muni.fi.pv168.localization");
+    private ResourceBundle localization = ResourceBundle.getBundle("cz.muni.fi.pv168.localization", new Locale("ru", "RU"));
     private DataSource dataSource = null;
     private CarManager carManager = new CarManagerImplementation();
     private CustomerManager customerManager = new CustomerManagerImplementation();
