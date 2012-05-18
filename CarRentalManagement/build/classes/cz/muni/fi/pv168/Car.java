@@ -65,23 +65,21 @@ public class Car {
         if (null == obj) {
             return false;
         }
-
-
-
         if (getClass() != obj.getClass()) {
             return false;
         }
         final Car other = (Car) obj;
-        if (!Objects.equals(this.toString(), other.toString())) {
-            return false;
-        }
-        return true;
+        
+        return (this.ID == other.ID);
     }
 
     @Override
     public int hashCode() {
-        return this.toString().hashCode();
+        int hash = 3;
+        hash = 83 * hash + Objects.hashCode(this.ID);
+        return hash;
     }
+    
     private Long ID;
     private String model;
     private String color;

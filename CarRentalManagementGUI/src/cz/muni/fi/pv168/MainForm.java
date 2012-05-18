@@ -473,7 +473,14 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
             switch (rentsAction) {
                 case ADD_RENT:
                     try {
-                        rentManager.rentCarToCustomer(rent);
+                        Car car = carManager.findCarByID(rent.getCarID());
+                        Customer customer = customerManager.findCustomerByID(rent.getCustomerID());
+                        
+                        if ((car == null) || (customer == null))
+                            return null;
+                        
+                        rentManager.rentCarToCustomer(car, customer, rent.getRentDate(), rent.getDueDate());
+                        
                         return rentManager.getAllRents();
                     } catch (IllegalArgumentException ex) {
                         JOptionPane.showMessageDialog(rootPane, localization.getString("cannot_add_rent"),
@@ -482,7 +489,10 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
                     }
                 case REMOVE_RENT:
                     try {
-                        rentManager.getCarFromCustomer(rent);
+                        Car car = carManager.findCarByID(rent.getCarID());
+                        Customer customer = customerManager.findCustomerByID(rent.getCustomerID());
+                        
+                        rentManager.getCarFromCustomer(car, customer);
                         return rentManager.getAllRents();
                     } catch (IllegalArgumentException ex) {
                         JOptionPane.showMessageDialog(rootPane, (localization.getString("cannot_remove_rent") + " " + rent.getID()),
@@ -630,6 +640,8 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
                     } catch (InterruptedException ex) {
                         throw new IllegalStateException(localization.getString("interrupted"), ex);
                     }
+                    new CarSwingWorker(CarsActions.GET_ALL_CARS).execute();
+                    new CustomerSwingWorker(CustomersActions.GET_ALL_CUSTOMERS).execute();
                     break;
                 case GET_CUSTOMER_WITH_CAR:
                     RentsTableModel customerWithCarModel = (RentsTableModel) rentTable.getModel();
@@ -668,43 +680,6 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
                     throw new IllegalStateException("default reached in done() RentalSwingWorker");
             }
             rentsAction = null;
-        }
-    }
-
-    public class RentValidatorSwingWorker extends SwingWorker<Boolean, Void>
-    {
-        private Rent rent;
-        
-        public void setRent(Rent rent)
-        {
-            this.rent = rent;
-        }
-        
-        @Override
-        protected Boolean doInBackground() throws Exception {
-            try {
-                return ((carManager.findCarByID(rent.getCarID()) != null) &&
-                        (customerManager.findCustomerByID(rent.getCustomerID()) != null));
-            } catch (IllegalArgumentException ex) {
-                return false;
-            }
-        }
-
-        @Override
-        protected void done() {
-            try
-            {
-                if (get())
-                    ((RentsTableModel)rentTable.getModel()).setValid(rent);
-            }
-            catch (ExecutionException ex) {
-                        JOptionPane.showMessageDialog(rootPane,
-                                ex.getCause().getMessage(), ex.getMessage(), JOptionPane.ERROR_MESSAGE);
-                    }
-            catch (InterruptedException ex)
-            {
-                throw new IllegalStateException(localization.getString("interrupted"), ex);
-            }
         }
     }
     
@@ -1366,8 +1341,7 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            NewRentForm addRentForm = new NewRentForm((RentsTableModel)rentTable.getModel(), localization,
-                    new RentValidatorSwingWorker());
+            NewRentForm addRentForm = new NewRentForm((RentsTableModel)rentTable.getModel(), localization);
             addRentForm.setVisible(true);
             addRentForm.toFront();
         }
@@ -1742,7 +1716,7 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
     private boolean isValid(Rent rent)
     {
         return ((rent.getCarID() != null) && (rent.getCustomerID() != null) && (rent.getDueDate() != null) &&
-                (rent.getRentDate() != null) && ((RentsTableModel)rentTable.getModel()).getValid(rent));
+                (rent.getRentDate() != null));
     }
     
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed

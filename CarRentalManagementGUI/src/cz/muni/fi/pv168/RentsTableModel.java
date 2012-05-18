@@ -9,8 +9,6 @@ public class RentsTableModel extends AbstractTableModel {
     private List<Rent> rents = new ArrayList<>();
     private ResourceBundle localization;
     
-    private Map<Rent, Boolean> validRents = new HashMap<>();
-    
     public List<Rent> getRents()
     {
         return Collections.unmodifiableList(rents);
@@ -19,19 +17,6 @@ public class RentsTableModel extends AbstractTableModel {
     public RentsTableModel(ResourceBundle localization)
     {
         this.localization = localization;
-    }
-
-    public void setValid(Rent rent)
-    {
-        validRents.put(rent, true);
-    }
-    
-    public boolean getValid(Rent rent)
-    {
-        if (validRents.containsKey(rent))
-            return validRents.get(rent);
-        
-        return false;
     }
     
     public boolean hasNewRents()

@@ -21,17 +21,14 @@ public class NewRentForm extends javax.swing.JFrame {
     
     private ResourceBundle localization;
     
-    private MainForm.RentValidatorSwingWorker worker;
-    
     /**
      * Creates new form NewRentForm
      */
-    public NewRentForm(RentsTableModel rtm, ResourceBundle localization, MainForm.RentValidatorSwingWorker worker) {
+    public NewRentForm(RentsTableModel rtm, ResourceBundle localization) {
         initComponents();
         
         table = rtm;
         this.localization = localization;
-        this.worker = worker;
         
         this.setTitle(localization.getString("new_rent"));
         
@@ -250,9 +247,6 @@ public class NewRentForm extends javax.swing.JFrame {
         rent.setDueDate(new Date(cal.getTime().getTime()));
         
         table.add(rent);
-        worker.setRent(rent);
-        
-        worker.execute();
         
         this.dispose();
     }//GEN-LAST:event_jButton2ActionPerformed
