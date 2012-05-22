@@ -153,7 +153,7 @@ public class RentManagerImplementation implements RentManager {
         PreparedStatement statement = null;
         try {
             connection = dataSource.getConnection();
-            statement = connection.prepareStatement("INSERT INTO RENTS (car, customer, rent_date, due_date) VALUES (?,?,?,?)");
+            statement = connection.prepareStatement("INSERT INTO RENTS (car, customer, rent_date, due_date) VALUES (?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
             statement.setLong(1, car.getID());
             statement.setLong(2, customer.getID());
             statement.setDate(3, rentDate);
@@ -161,12 +161,12 @@ public class RentManagerImplementation implements RentManager {
             if (1 != statement.executeUpdate()) {
                 throw new TransactionException("Cant INSERT Rent to RentDB");
             }
+            Long ID = DBUtils.getID(statement.getGeneratedKeys());
+            logger.log(Level.INFO, ("New Rent ID " + ID + " added"));
             car.setStatus(Boolean.FALSE);
             customer.setActive(Boolean.TRUE);
             carManager.updateCarInfo(car);
             customerManager.updateCustomerInfo(customer);
-            Long ID = DBUtils.getID(statement.getGeneratedKeys());
-            logger.log(Level.INFO, ("New Rent ID " + ID + " added"));
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Error when renting car to customer in RentDB", ex);
             throw new TransactionException("Error when renting car to customer in RentDB", ex);
@@ -211,7 +211,7 @@ public class RentManagerImplementation implements RentManager {
         }
 
     }
-    
+
     private Rent getRentFromResultSet(ResultSet resultSet) throws SQLException {
         Rent rent = new Rent();
         rent.setID(resultSet.getLong("ID"));

@@ -19,85 +19,72 @@ import org.apache.commons.dbcp.BasicDataSource;
 public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
 
     private DataSource prepareDataSource() {
-        /*BasicDataSource ds = new BasicDataSource();
-        Properties properties = new Properties();
-        FileInputStream in = null;
-        try {
-            in = new FileInputStream("database.properties");
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, "File Not Found", ex);
-        }
-        try {
-            properties.load(in);
-        } catch (IOException ex) {
-            Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, "Can Not Read Properties File", ex);
-        }
-        String drivers = properties.getProperty("jdbc.drivers");
-        if (null == drivers) {
-            System.setProperty("jdbs.drivers", drivers);
-        }
-        String url = properties.getProperty("jdbc.url");
-        String username = properties.getProperty("jdbc.username");
-        String password = properties.getProperty("jdbc.password");
-        ds.setUrl(url);
-        ds.setUsername(username);
-        ds.setPassword(password);
-        return ds;*/
-        
+        /*
+         * BasicDataSource ds = new BasicDataSource(); Properties properties =
+         * new Properties(); FileInputStream in = null; try { in = new
+         * FileInputStream("database.properties"); } catch
+         * (FileNotFoundException ex) {
+         * Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, "File
+         * Not Found", ex); } try { properties.load(in); } catch (IOException
+         * ex) { Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE,
+         * "Can Not Read Properties File", ex); } String drivers =
+         * properties.getProperty("jdbc.drivers"); if (null == drivers) {
+         * System.setProperty("jdbs.drivers", drivers); } String url =
+         * properties.getProperty("jdbc.url"); String username =
+         * properties.getProperty("jdbc.username"); String password =
+         * properties.getProperty("jdbc.password"); ds.setUrl(url);
+         * ds.setUsername(username); ds.setPassword(password); return ds;
+         */
+
         ResourceBundle databaseProperties = ResourceBundle.getBundle("cz.muni.fi.pv168.database");
-        
+
         String url = databaseProperties.getString("jdbc.url");
         String username = databaseProperties.getString("jdbc.username");
         String password = databaseProperties.getString("jdbc.password");
-        
+
         BasicDataSource ds = new BasicDataSource();
         ds.setUrl(url);
         ds.setUsername(username);
         ds.setPassword(password);
-        
-        try
-        {
+
+        try {
             DBUtils.tryCreateTables(ds);
-        }
-        catch (SQLException ex)
-        {
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(jMenu1, localization.getString("db_connection_failure"),
-                localization.getString("error"), JOptionPane.ERROR_MESSAGE);
+                    localization.getString("error"), JOptionPane.ERROR_MESSAGE);
         }
-        
+
         carManager.setDataSource(ds);
         customerManager.setDataSource(ds);
         rentManager.setDataSource(ds);
-        
+
         return ds;
     }
 
     @Override
-    public void lostOwnership(Clipboard clipboard, Transferable contents) { }
+    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+    }
 
     private class CustomerSwingWorker extends SwingWorker<List<Customer>, Void> {
 
         private CustomersActions customersAction;
         private Customer customer;
         private String searchQuery;
-        
-        public CustomerSwingWorker(CustomersActions action)
-        {
+
+        public CustomerSwingWorker(CustomersActions action) {
             customersAction = action;
         }
-        
-        public CustomerSwingWorker(CustomersActions action, Customer customer)
-        {
+
+        public CustomerSwingWorker(CustomersActions action, Customer customer) {
             this(action);
             this.customer = customer;
         }
-        
-        public CustomerSwingWorker(String query)
-        {
+
+        public CustomerSwingWorker(String query) {
             this(CustomersActions.SEARCH_CUSTOMERS);
             searchQuery = query;
         }
-        
+
         @Override
         protected List<Customer> doInBackground() throws Exception {
             switch (customersAction) {
@@ -144,15 +131,15 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
                     try {
                         List<Customer> customers = customerManager.getAllCustomers();
                         List<Customer> customerMatches = new ArrayList<>();
-                        
-                        for (Customer c : customers)
-                        {
-                            if (c.getID().toString().contains(searchQuery) || c.getAddress().contains(searchQuery) ||
-                                    c.getDriversLicense().contains(searchQuery) || c.getFirstName().contains(searchQuery) ||
-                                    c.getLastName().contains(searchQuery) || c.getPhoneNumber().contains(searchQuery))
+
+                        for (Customer c : customers) {
+                            if (c.getID().toString().contains(searchQuery) || c.getAddress().contains(searchQuery)
+                                    || c.getDriversLicense().contains(searchQuery) || c.getFirstName().contains(searchQuery)
+                                    || c.getLastName().contains(searchQuery) || c.getPhoneNumber().contains(searchQuery)) {
                                 customerMatches.add(c);
+                            }
                         }
-                        
+
                         return customerMatches;
                     } catch (IllegalArgumentException ex) {
                         JOptionPane.showMessageDialog(rootPane, localization.getString("db_error"),
@@ -253,29 +240,25 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         private CarsActions carsAction;
         private Car car;
         private String searchQuery;
-        
-        public CarSwingWorker(CarsActions action)
-        {
+
+        public CarSwingWorker(CarsActions action) {
             carsAction = action;
         }
-        
-        public CarSwingWorker(CarsActions action, Car car)
-        {
+
+        public CarSwingWorker(CarsActions action, Car car) {
             this(action);
             this.car = car;
         }
-        
-        public CarSwingWorker(String query)
-        {
+
+        public CarSwingWorker(String query) {
             this(CarsActions.SEARCH_CARS);
             searchQuery = query;
         }
-        
+
         @Override
         protected List<Car> doInBackground() throws Exception {
             switch (carsAction) {
-                case ADD_CAR:
-                {
+                case ADD_CAR: {
                     try {
                         carManager.addCar(car);
 
@@ -331,15 +314,15 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
                     try {
                         List<Car> cars = carManager.getAllCars();
                         List<Car> carMatches = new ArrayList<>();
-                
-                        for (Car c : cars)
-                        {
-                            if (c.getID().toString().contains(searchQuery) || c.getColor().contains(searchQuery) ||
-                                    c.getLicensePlate().contains(searchQuery) || c.getModel().contains(searchQuery) ||
-                                    c.getRentalPayment().toString().contains(searchQuery))
+
+                        for (Car c : cars) {
+                            if (c.getID().toString().contains(searchQuery) || c.getColor().contains(searchQuery)
+                                    || c.getLicensePlate().contains(searchQuery) || c.getModel().contains(searchQuery)
+                                    || c.getRentalPayment().toString().contains(searchQuery)) {
                                 carMatches.add(c);
+                            }
                         }
-                        
+
                         return carMatches;
                     } catch (IllegalArgumentException ex) {
                         JOptionPane.showMessageDialog(rootPane, localization.getString("db_error"),
@@ -450,24 +433,21 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         private RentsActions rentsAction;
         private Rent rent;
         private String searchQuery;
-        
-        public RentalSwingWorker(RentsActions action)
-        {
+
+        public RentalSwingWorker(RentsActions action) {
             rentsAction = action;
         }
-        
-        public RentalSwingWorker(RentsActions action, Rent rent)
-        {
+
+        public RentalSwingWorker(RentsActions action, Rent rent) {
             this(action);
             this.rent = rent;
         }
-        
-        public RentalSwingWorker(String query)
-        {
+
+        public RentalSwingWorker(String query) {
             this(RentsActions.SEARCH_RENTS);
             searchQuery = query;
         }
-        
+
         @Override
         protected List<Rent> doInBackground() throws Exception {
             switch (rentsAction) {
@@ -475,12 +455,13 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
                     try {
                         Car car = carManager.findCarByID(rent.getCarID());
                         Customer customer = customerManager.findCustomerByID(rent.getCustomerID());
-                        
-                        if ((car == null) || (customer == null))
+
+                        if ((car == null) || (customer == null)) {
                             return null;
-                        
+                        }
+
                         rentManager.rentCarToCustomer(car, customer, rent.getRentDate(), rent.getDueDate());
-                        
+
                         return rentManager.getAllRents();
                     } catch (IllegalArgumentException ex) {
                         JOptionPane.showMessageDialog(rootPane, localization.getString("cannot_add_rent"),
@@ -491,7 +472,7 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
                     try {
                         Car car = carManager.findCarByID(rent.getCarID());
                         Customer customer = customerManager.findCustomerByID(rent.getCustomerID());
-                        
+
                         rentManager.getCarFromCustomer(car, customer);
                         return rentManager.getAllRents();
                     } catch (IllegalArgumentException ex) {
@@ -522,8 +503,8 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
 
                     List<Rent> allCustomerCars = new ArrayList<>();
                     for (Car car : rentManager.getAllCustomerCars(customer)) {
-                        Rent rent = rentManager.findRentWithCar(car);
-                        allCustomerCars.add(rent);
+                        Rent allRent = rentManager.findRentWithCar(car);
+                        allCustomerCars.add(allRent);
                     }
                     return allCustomerCars;
 
@@ -574,17 +555,17 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
                     try {
                         List<Rent> rents = rentManager.getAllRents();
                         List<Rent> rentMatches = new ArrayList<>();
-                        
-                        for (Rent r : rents)
-                        {
-                            if (r.getID().toString().contains(searchQuery) ||
-                                    r.getCarID().toString().contains(searchQuery) ||
-                                    r.getCustomerID().toString().contains(searchQuery) ||
-                                    r.getDueDate().toString().contains(searchQuery) ||
-                                    r.getRentDate().toString().contains(searchQuery))
+
+                        for (Rent r : rents) {
+                            if (r.getID().toString().contains(searchQuery)
+                                    || r.getCarID().toString().contains(searchQuery)
+                                    || r.getCustomerID().toString().contains(searchQuery)
+                                    || r.getDueDate().toString().contains(searchQuery)
+                                    || r.getRentDate().toString().contains(searchQuery)) {
                                 rentMatches.add(r);
+                            }
                         }
-                        
+
                         return rentMatches;
                     } catch (IllegalArgumentException ex) {
                         JOptionPane.showMessageDialog(rootPane, localization.getString("db_error"),
@@ -682,9 +663,8 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
             rentsAction = null;
         }
     }
-    
-    public MainForm()
-    {
+
+    public MainForm() {
         initComponents();
         carManager.setDataSource(dataSource);
         customerManager.setDataSource(dataSource);
@@ -695,7 +675,7 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MainForm.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         carManager.setLogger(fs);
         customerManager.setLogger(fs);
         rentManager.setLogger(fs);
@@ -703,43 +683,43 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         jTabbedPane1.setTitleAt(0, localization.getString("cars"));
         jTabbedPane1.setTitleAt(1, localization.getString("customers"));
         jTabbedPane1.setTitleAt(2, localization.getString("rents"));
-        
+
         carTable.setModel(new CarsTableModel(localization));
         customerTable.setModel(new CustomersTableModel(localization));
         rentTable.setModel(new RentsTableModel(localization));
-        
+
         jMenu1.setText(localization.getString("file"));
         jMenu2.setText(localization.getString("data"));
         jMenu3.setText(localization.getString("new"));
         jMenu4.setText(localization.getString("help"));
-        
+
         jMenuItem1.setText(localization.getString("db_connect"));
         jMenuItem2.setText(localization.getString("db_disconnect"));
         jMenuItem9.setText(localization.getString("help"));
         jMenuItem10.setText(localization.getString("credits"));
-        
+
         jMenuItem3.setAction(new ExitAction(localization.getString("exit")));
         jMenuItem7.setAction(new AddRentAction(localization.getString("rent")));
         jMenuItem8.setAction(new AddCarAction(localization.getString("car")));
         jMenuItem11.setAction(new CommitAction(localization.getString("commit")));
         jMenuItem18.setAction(new AddCustomerAction(localization.getString("customer")));
-        
+
         jButton1.setAction(new CommitAction(localization.getString("commit")));
         jButton2.setAction(new AddCarAction(localization.getString("new_car")));
         jButton3.setAction(new AddCustomerAction(localization.getString("new_customer")));
         jButton4.setAction(new AddRentAction(localization.getString("new_rent")));
-        
+
         jMenuItem4.setAction(new SortAction(localization.getString("sort")));
         jMenuItem5.setText(localization.getString("find"));
-        
+
         jButton8.setAction(new SortAction(localization.getString("sort")));
         jButton9.setText(localization.getString("search"));
-        
+
         jMenu6.setText(localization.getString("remove"));
         jMenuItem19.setText(localization.getString("car"));
         jMenuItem20.setText(localization.getString("customer"));
         jMenuItem21.setText(localization.getString("rent"));
-        
+
         jMenuItem23.setAction(new CopyAction(localization.getString("copy")));
         jMenuItem24.setAction(new CutAction(localization.getString("cut")));
         jMenuItem25.setAction(new PasteAction(localization.getString("paste")));
@@ -1118,6 +1098,11 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         jButton1.setMaximumSize(new java.awt.Dimension(80, 23));
         jButton1.setMinimumSize(new java.awt.Dimension(80, 23));
         jButton1.setPreferredSize(new java.awt.Dimension(80, 23));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         jButton1.setBounds(800, 630, 80, 23);
         jDesktopPane1.add(jButton1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -1254,528 +1239,496 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private boolean discardChanges()
-    {
-        if (!((CarsTableModel)carTable.getModel()).getUpdatedCars().isEmpty() ||
-                ((CarsTableModel)carTable.getModel()).hasNewCars())
-        {
+    private boolean discardChanges() {
+        if (!((CarsTableModel) carTable.getModel()).getUpdatedCars().isEmpty()
+                || ((CarsTableModel) carTable.getModel()).hasNewCars()) {
             if (JOptionPane.showConfirmDialog(jMenu1,
                     localization.getString("unsaved_cars_message"),
-                    localization.getString("uncommited_changes"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
+                    localization.getString("uncommited_changes"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
                 return false;
+            }
         }
 
-        if (!((CustomersTableModel)customerTable.getModel()).getUpdatedCustomers().isEmpty() ||
-            ((CustomersTableModel)customerTable.getModel()).hasNewCustomers())
-        {
+        if (!((CustomersTableModel) customerTable.getModel()).getUpdatedCustomers().isEmpty()
+                || ((CustomersTableModel) customerTable.getModel()).hasNewCustomers()) {
             if (JOptionPane.showConfirmDialog(jMenu1,
                     localization.getString("unsaved_customers_message"),
-                    localization.getString("uncommited_changes"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
+                    localization.getString("uncommited_changes"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
                 return false;
+            }
         }
-        
-        if (((RentsTableModel)rentTable.getModel()).hasNewRents())
-        {
+
+        if (((RentsTableModel) rentTable.getModel()).hasNewRents()) {
             if (JOptionPane.showConfirmDialog(jMenu1,
                     localization.getString("unsaved_rents_message"),
-                    localization.getString("uncommited_changes"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION)
+                    localization.getString("uncommited_changes"), JOptionPane.YES_NO_OPTION) != JOptionPane.YES_OPTION) {
                 return false;
+            }
         }
-        
+
         return true;
     }
-    
-    private class ExitAction extends AbstractAction
-    {
+
+    private class ExitAction extends AbstractAction {
+
         public ExitAction(String string) {
             super(string);
         }
 
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            if (discardChanges())
+        public void actionPerformed(ActionEvent e) {
+            if (discardChanges()) {
                 System.exit(0);
+            }
         }
     }
-    
-    private class AddCarAction extends AbstractAction
-    {
-        public AddCarAction(String string)
-        {
+
+    private class AddCarAction extends AbstractAction {
+
+        public AddCarAction(String string) {
             super(string);
         }
-        
+
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            NewCarForm addCarForm = new NewCarForm((CarsTableModel)carTable.getModel(), localization);
+        public void actionPerformed(ActionEvent e) {
+            NewCarForm addCarForm = new NewCarForm((CarsTableModel) carTable.getModel(), localization);
             addCarForm.setVisible(true);
             addCarForm.toFront();
         }
     }
-    
-    private class AddCustomerAction extends AbstractAction
-    {
-        public AddCustomerAction(String string)
-        {
+
+    private class AddCustomerAction extends AbstractAction {
+
+        public AddCustomerAction(String string) {
             super(string);
         }
-        
+
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            NewCustomerForm addCustomerForm = new NewCustomerForm((CustomersTableModel)customerTable.getModel(), localization);
+        public void actionPerformed(ActionEvent e) {
+            NewCustomerForm addCustomerForm = new NewCustomerForm((CustomersTableModel) customerTable.getModel(), localization);
             addCustomerForm.setVisible(true);
             addCustomerForm.toFront();
         }
     }
-    
-    private class AddRentAction extends AbstractAction
-    {
-        public AddRentAction(String string)
-        {
+
+    private class AddRentAction extends AbstractAction {
+
+        public AddRentAction(String string) {
             super(string);
         }
-        
+
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            NewRentForm addRentForm = new NewRentForm((RentsTableModel)rentTable.getModel(), localization);
+        public void actionPerformed(ActionEvent e) {
+            NewRentForm addRentForm = new NewRentForm((RentsTableModel) rentTable.getModel(), localization);
             addRentForm.setVisible(true);
             addRentForm.toFront();
         }
     }
-    
-    private void Copy()
-    {
+
+    private void Copy() {
         Clipboard clipboard = getToolkit().getSystemClipboard();
         String data = null;
-        
-        switch (jTabbedPane1.getSelectedIndex())
-        {
-            case 0:
-            {   
+
+        switch (jTabbedPane1.getSelectedIndex()) {
+            case 0: {
                 int column = carTable.getSelectedColumn();
                 int row = carTable.getSelectedRow();
-                
-                if ((column < 0) || (row < 0))
+
+                if ((column < 0) || (row < 0)) {
                     return;
-                
-                CarsTableModel ctm = (CarsTableModel)carTable.getModel();
-                
+                }
+
+                CarsTableModel ctm = (CarsTableModel) carTable.getModel();
+
                 data = ctm.getValueAt(row, column).toString();
-                
+
                 break;
             }
-            case 1:
-            {
+            case 1: {
                 int column = customerTable.getSelectedColumn();
                 int row = customerTable.getSelectedRow();
-                
-                if ((column < 0) || (row < 0))
+
+                if ((column < 0) || (row < 0)) {
                     return;
-                
-                CustomersTableModel ctm = (CustomersTableModel)customerTable.getModel();
-                
+                }
+
+                CustomersTableModel ctm = (CustomersTableModel) customerTable.getModel();
+
                 data = ctm.getValueAt(row, column).toString();
-                
+
                 break;
             }
-            case 2:
-            {
+            case 2: {
                 int column = rentTable.getSelectedColumn();
                 int row = rentTable.getSelectedRow();
-                
-                if ((column < 0) || (row < 0))
+
+                if ((column < 0) || (row < 0)) {
                     return;
-                
-                RentsTableModel rtm = (RentsTableModel)rentTable.getModel();
-                
+                }
+
+                RentsTableModel rtm = (RentsTableModel) rentTable.getModel();
+
                 data = rtm.getValueAt(row, column).toString();
-                
+
                 break;
             }
-            default: break;
+            default:
+                break;
         }
-        
+
         clipboard.setContents(new StringSelection(data), this);
     }
-    
-    private class CopyAction extends AbstractAction
-    {
-        public CopyAction(String string)
-        {
+
+    private class CopyAction extends AbstractAction {
+
+        public CopyAction(String string) {
             super(string);
         }
-        
+
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
+        public void actionPerformed(ActionEvent e) {
             Copy();
         }
     }
-    
-    private void Cut()
-    {
+
+    private void Cut() {
         Clipboard clipboard = getToolkit().getSystemClipboard();
         String data = null;
-        
-        switch (jTabbedPane1.getSelectedIndex())
-        {
-            case 0:
-            {   
+
+        switch (jTabbedPane1.getSelectedIndex()) {
+            case 0: {
                 int column = carTable.getSelectedColumn();
                 int row = carTable.getSelectedRow();
-                
-                CarsTableModel ctm = (CarsTableModel)carTable.getModel();
-                
-                if ((column < 0) || (row < 0) || !ctm.isCellEditable(row, column))
+
+                CarsTableModel ctm = (CarsTableModel) carTable.getModel();
+
+                if ((column < 0) || (row < 0) || !ctm.isCellEditable(row, column)) {
                     return;
-                
+                }
+
                 data = ctm.getValueAt(row, column).toString();
                 ctm.setValueAt("", row, column);
-                
+
                 break;
             }
-            case 1:
-            {
+            case 1: {
                 int column = customerTable.getSelectedColumn();
                 int row = customerTable.getSelectedRow();
-                
-                CustomersTableModel ctm = (CustomersTableModel)customerTable.getModel();
-                
-                if ((column < 0) || (row < 0) || !ctm.isCellEditable(row, column))
+
+                CustomersTableModel ctm = (CustomersTableModel) customerTable.getModel();
+
+                if ((column < 0) || (row < 0) || !ctm.isCellEditable(row, column)) {
                     return;
-                
+                }
+
                 data = ctm.getValueAt(row, column).toString();
                 ctm.setValueAt("", row, column);
-                
+
                 break;
             }
-            case 2:
-            {
+            case 2: {
                 int column = rentTable.getSelectedColumn();
                 int row = rentTable.getSelectedRow();
-                
-                RentsTableModel rtm = (RentsTableModel)rentTable.getModel();
-                
-                if ((column < 0) || (row < 0) || !rtm.isCellEditable(row, column))
+
+                RentsTableModel rtm = (RentsTableModel) rentTable.getModel();
+
+                if ((column < 0) || (row < 0) || !rtm.isCellEditable(row, column)) {
                     return;
-                
+                }
+
                 data = rtm.getValueAt(row, column).toString();
                 rtm.setValueAt("", row, column);
-                
+
                 break;
             }
-            default: break;
+            default:
+                break;
         }
-        
+
         clipboard.setContents(new StringSelection(data), this);
     }
-    
-    private class CutAction extends AbstractAction
-    {
-        public CutAction(String string)
-        {
+
+    private class CutAction extends AbstractAction {
+
+        public CutAction(String string) {
             super(string);
         }
-        
+
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
+        public void actionPerformed(ActionEvent e) {
             Cut();
         }
     }
-    
-    private void Paste()
-    {
+
+    private void Paste() {
         Clipboard clipboard = getToolkit().getSystemClipboard();
         String data = null;
-        
-        try
-        {
-            data = (String)clipboard.getData(DataFlavor.stringFlavor);
-        }
-        catch (IOException | UnsupportedFlavorException e)
-        {
+
+        try {
+            data = (String) clipboard.getData(DataFlavor.stringFlavor);
+        } catch (IOException | UnsupportedFlavorException e) {
             return;
         }
-        
-        if (data == null)
+
+        if (data == null) {
             return;
-        
-        switch (jTabbedPane1.getSelectedIndex())
-        {
-            case 0:
-            {   
+        }
+
+        switch (jTabbedPane1.getSelectedIndex()) {
+            case 0: {
                 int column = carTable.getSelectedColumn();
                 int row = carTable.getSelectedRow();
-                
-                CarsTableModel ctm = (CarsTableModel)carTable.getModel();
-                
-                if ((column < 0) || (row < 0) || !ctm.isCellEditable(row, column))
+
+                CarsTableModel ctm = (CarsTableModel) carTable.getModel();
+
+                if ((column < 0) || (row < 0) || !ctm.isCellEditable(row, column)) {
                     return;
-                
+                }
+
                 ctm.setValueAt(data, row, column);
-                
+
                 break;
             }
-            case 1:
-            {
+            case 1: {
                 int column = customerTable.getSelectedColumn();
                 int row = customerTable.getSelectedRow();
-                
-                CustomersTableModel ctm = (CustomersTableModel)customerTable.getModel();
-                
-                if ((column < 0) || (row < 0) || !ctm.isCellEditable(row, column))
+
+                CustomersTableModel ctm = (CustomersTableModel) customerTable.getModel();
+
+                if ((column < 0) || (row < 0) || !ctm.isCellEditable(row, column)) {
                     return;
-                
+                }
+
                 ctm.setValueAt(data, row, column);
-                
+
                 break;
             }
-            case 2:
-            {
+            case 2: {
                 int column = rentTable.getSelectedColumn();
                 int row = rentTable.getSelectedRow();
-                
-                RentsTableModel rtm = (RentsTableModel)rentTable.getModel();
-                
-                if ((column < 0) || (row < 0) || !rtm.isCellEditable(row, column))
+
+                RentsTableModel rtm = (RentsTableModel) rentTable.getModel();
+
+                if ((column < 0) || (row < 0) || !rtm.isCellEditable(row, column)) {
                     return;
-                
+                }
+
                 rtm.setValueAt(data, row, column);
-                
+
                 break;
             }
-            default: break;
+            default:
+                break;
         }
     }
-    
-    private class PasteAction extends AbstractAction
-    {
-        public PasteAction(String string)
-        {
+
+    private class PasteAction extends AbstractAction {
+
+        public PasteAction(String string) {
             super(string);
         }
-        
+
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
+        public void actionPerformed(ActionEvent e) {
             Paste();
         }
     }
-    
-    private class SortAction extends AbstractAction
-    {
-        public SortAction(String string)
-        {
+
+    private class SortAction extends AbstractAction {
+
+        public SortAction(String string) {
             super(string);
         }
-        
+
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            
+        public void actionPerformed(ActionEvent e) {
         }
     }
-    
-    private class CommitAction extends AbstractAction
-    {
-        public CommitAction(String string)
-        {
+
+    private class CommitAction extends AbstractAction {
+
+        public CommitAction(String string) {
             super(string);
         }
-        
+
         @Override
-        public void actionPerformed(ActionEvent e)
-        {
-            if (dataSource == null)
-            {
+        public void actionPerformed(ActionEvent e) {
+            if (dataSource == null) {
                 JOptionPane.showMessageDialog(jMenu1, localization.getString("no_db_loaded_message"),
                         localization.getString("db_missing"), JOptionPane.ERROR_MESSAGE);
                 return;
             }
-            
-            switch (jTabbedPane1.getSelectedIndex())
-            {
-                case 0:
-                {
-                    CarsTableModel ctm = (CarsTableModel)carTable.getModel();
-                    
+
+            switch (jTabbedPane1.getSelectedIndex()) {
+                case 0: {
+                    CarsTableModel ctm = (CarsTableModel) carTable.getModel();
+
                     Set<Car> toBeRemovedCars = new HashSet<>();
                     Set<Car> toBeUpdatedCars = new HashSet<>();
-                    
-                    if (ctm.hasNewCars())
-                        for (Car c : ctm.getCars())
-                            if ((c.getID() == null) && (isValid(c)))
+
+                    if (ctm.hasNewCars()) {
+                        for (Car c : ctm.getCars()) {
+                            if ((c.getID() == null) && (isValid(c))) {
                                 new CarSwingWorker(CarsActions.ADD_CAR, c).execute();
-                    
-                    for (Car c : ctm.getUpdatedCars())
-                    {
-                        if (!isValid(c))
-                            toBeRemovedCars.add(c);
-                        else
-                            toBeUpdatedCars.add(c);
+                            }
+                        }
                     }
-                    
-                    for (Car c : toBeUpdatedCars)
-                    {
+
+                    for (Car c : ctm.getUpdatedCars()) {
+                        if (!isValid(c)) {
+                            toBeRemovedCars.add(c);
+                        } else {
+                            toBeUpdatedCars.add(c);
+                        }
+                    }
+
+                    for (Car c : toBeUpdatedCars) {
                         new CarSwingWorker(CarsActions.EDIT_CAR, c).execute();
                         ctm.carResolved(c);
                     }
-                    
-                    if (!toBeRemovedCars.isEmpty())
-                    {
+
+                    if (!toBeRemovedCars.isEmpty()) {
                         if (JOptionPane.showConfirmDialog(jMenu1, localization.getString("cars_being_deleted"),
-                            localization.getString("car_info_missing"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-                        {
-                            for (Car c : toBeRemovedCars)
-                            {
+                                localization.getString("car_info_missing"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                            for (Car c : toBeRemovedCars) {
                                 new CarSwingWorker(CarsActions.REMOVE_CAR, c).execute();
                                 ctm.carResolved(c);
                             }
                         }
                     }
-                    
+
                     break;
                 }
-                case 1:
-                {
-                    CustomersTableModel ctm = (CustomersTableModel)customerTable.getModel();
-                    
+                case 1: {
+                    CustomersTableModel ctm = (CustomersTableModel) customerTable.getModel();
+
                     Set<Customer> toBeRemovedCustomers = new HashSet<>();
                     Set<Customer> toBeUpdatedCustomers = new HashSet<>();
-                    
-                    if (ctm.hasNewCustomers())
-                        for (Customer c : ctm.getCustomers())
-                            if ((c.getID() == null) && (isValid(c)))
+
+                    if (ctm.hasNewCustomers()) {
+                        for (Customer c : ctm.getCustomers()) {
+                            if ((c.getID() == null) && (isValid(c))) {
                                 new CustomerSwingWorker(CustomersActions.ADD_CUSTOMER, c).execute();
-                    
-                    for (Customer c : ctm.getUpdatedCustomers())
-                    {
-                        if (!isValid(c))
-                            toBeRemovedCustomers.add(c);
-                        else
-                            toBeUpdatedCustomers.add(c);
+                            }
+                        }
                     }
-                    
-                    for (Customer c : toBeUpdatedCustomers)
-                    {
+
+                    for (Customer c : ctm.getUpdatedCustomers()) {
+                        if (!isValid(c)) {
+                            toBeRemovedCustomers.add(c);
+                        } else {
+                            toBeUpdatedCustomers.add(c);
+                        }
+                    }
+
+                    for (Customer c : toBeUpdatedCustomers) {
                         new CustomerSwingWorker(CustomersActions.EDIT_CUSTOMER, c).execute();
                         ctm.customerResolved(c);
                     }
-                    
-                    if (!toBeRemovedCustomers.isEmpty())
-                    {
+
+                    if (!toBeRemovedCustomers.isEmpty()) {
                         if (JOptionPane.showConfirmDialog(jMenu1, localization.getString("customers_being_deleted"),
-                            localization.getString("customer_info_missing"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION)
-                        {
-                            for (Customer c : toBeRemovedCustomers)
-                            {
+                                localization.getString("customer_info_missing"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                            for (Customer c : toBeRemovedCustomers) {
                                 new CustomerSwingWorker(CustomersActions.REMOVE_CUSTOMER, c).execute();
                                 ctm.customerResolved(c);
                             }
                         }
                     }
-                    
+
                     break;
                 }
-                case 2:
-                {
-                    RentsTableModel rtm = (RentsTableModel)rentTable.getModel();
-                    
-                    if (rtm.hasNewRents())
-                        for (Rent r : rtm.getRents())
-                            if ((r.getID() == null) && (isValid(r)))
+                case 2: {
+                    RentsTableModel rtm = (RentsTableModel) rentTable.getModel();
+
+                    if (rtm.hasNewRents()) {
+                        for (Rent r : rtm.getRents()) {
+                            if ((r.getID() == null) && (isValid(r))) {
                                 new RentalSwingWorker(RentsActions.ADD_RENT, r).execute();
-                    
+                            }
+                        }
+                    }
+
                     break;
                 }
             }
         }
     }
-    
-    private boolean isValid(Car car)
-    {
-        return ((car.getModel() != null) && !car.getModel().isEmpty() && (car.getColor() != null) &&
-                !car.getColor().isEmpty() && (car.getLicensePlate() != null) && (car.getLicensePlate().length() > 6) &&
-                (car.getLicensePlate().length() < 9) && (car.getRentalPayment() != null) && (car.getRentalPayment() >= 0));
+
+    private boolean isValid(Car car) {
+        return ((car.getModel() != null) && !car.getModel().isEmpty() && (car.getColor() != null)
+                && !car.getColor().isEmpty() && (car.getLicensePlate() != null) && (car.getLicensePlate().length() > 6)
+                && (car.getLicensePlate().length() < 9) && (car.getRentalPayment() != null) && (car.getRentalPayment() >= 0));
     }
-    
-    private boolean isValid(Customer customer)
-    {
-        return ((customer.getAddress() != null) && !customer.getAddress().isEmpty() &&
-                (customer.getDriversLicense() != null) && !customer.getDriversLicense().isEmpty() &&
-                (customer.getFirstName() != null) && !customer.getFirstName().isEmpty() &&
-                (customer.getLastName() != null) && !customer.getLastName().isEmpty() &&
-                (customer.getPhoneNumber() != null) && !customer.getPhoneNumber().isEmpty());
+
+    private boolean isValid(Customer customer) {
+        return ((customer.getAddress() != null) && !customer.getAddress().isEmpty()
+                && (customer.getDriversLicense() != null) && !customer.getDriversLicense().isEmpty()
+                && (customer.getFirstName() != null) && !customer.getFirstName().isEmpty()
+                && (customer.getLastName() != null) && !customer.getLastName().isEmpty()
+                && (customer.getPhoneNumber() != null) && !customer.getPhoneNumber().isEmpty());
     }
-    
-    private boolean isValid(Rent rent)
-    {
-        return ((rent.getCarID() != null) && (rent.getCustomerID() != null) && (rent.getDueDate() != null) &&
-                (rent.getRentDate() != null));
+
+    private boolean isValid(Rent rent) {
+        return ((rent.getCarID() != null) && (rent.getCustomerID() != null) && (rent.getDueDate() != null)
+                && (rent.getRentDate() != null));
     }
-    
+
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         dataSource = prepareDataSource();
-        
+
         new CustomerSwingWorker(CustomersActions.GET_ALL_CUSTOMERS).execute();
         new CarSwingWorker(CarsActions.GET_ALL_CARS).execute();
         new RentalSwingWorker(RentsActions.GET_ALL_RENTS).execute();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
-        if (discardChanges())
-        {
-            ((CarsTableModel)carTable.getModel()).updateCars(Collections.EMPTY_LIST);
-            ((CustomersTableModel)customerTable.getModel()).updateCustomers(Collections.EMPTY_LIST);
-            ((RentsTableModel)rentTable.getModel()).updateRents(Collections.EMPTY_LIST);
-            
+        if (discardChanges()) {
+            ((CarsTableModel) carTable.getModel()).updateCars(Collections.EMPTY_LIST);
+            ((CustomersTableModel) customerTable.getModel()).updateCustomers(Collections.EMPTY_LIST);
+            ((RentsTableModel) rentTable.getModel()).updateRents(Collections.EMPTY_LIST);
+
             dataSource = null;
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
-    private void Search(String query)
-    {
-        switch (jTabbedPane1.getSelectedIndex())
-        {
-            case 0:
-            {   
-                if ((query == null) || query.isEmpty())
+    private void Search(String query) {
+        switch (jTabbedPane1.getSelectedIndex()) {
+            case 0: {
+                if ((query == null) || query.isEmpty()) {
                     new CarSwingWorker(CarsActions.GET_ALL_CARS).execute();
-                else
+                } else {
                     new CarSwingWorker(query).execute();
-                
+                }
+
                 break;
             }
-            case 1:
-            {
-                if ((query == null) || query.isEmpty())
+            case 1: {
+                if ((query == null) || query.isEmpty()) {
                     new CustomerSwingWorker(CustomersActions.GET_ALL_CUSTOMERS).execute();
-                else
+                } else {
                     new CustomerSwingWorker(query).execute();
-                
+                }
+
                 break;
             }
-            case 2:
-            {
-                if ((query == null) || (query.isEmpty()))
+            case 2: {
+                if ((query == null) || (query.isEmpty())) {
                     new RentalSwingWorker(RentsActions.GET_ALL_RENTS).execute();
-                else
+                } else {
                     new RentalSwingWorker(query).execute();
-                
+                }
+
                 break;
             }
-            default: break;
+            default:
+                break;
         }
     }
-    
+
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         String query = jTextField2.getText();
-        
+
         Search(query);
     }//GEN-LAST:event_jButton9ActionPerformed
 
@@ -1793,24 +1746,22 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
         String query = JOptionPane.showInputDialog(localization.getString("find"));
-        
+
         Search(query);
     }//GEN-LAST:event_jMenuItem5ActionPerformed
 
     private void jMenuItem19ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem19ActionPerformed
         String stringID = JOptionPane.showInputDialog("ID");
-        
+
         try {
             long id = Long.parseLong(stringID);
-            for (Car c : ((CarsTableModel)carTable.getModel()).getCars())
-                if (c.getID() == id)
-                {
+            for (Car c : ((CarsTableModel) carTable.getModel()).getCars()) {
+                if (c.getID() == id) {
                     new CarSwingWorker(CarsActions.REMOVE_CAR, c).execute();
                     return;
                 }
-        }
-        catch (NumberFormatException ex)
-        {
+            }
+        } catch (NumberFormatException ex) {
             JOptionPane.showConfirmDialog(jMenu1,
                     ("ID " + localization.getString("must_be_number")),
                     localization.getString("invalid_input"), JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
@@ -1819,18 +1770,16 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
 
     private void jMenuItem20ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem20ActionPerformed
         String stringID = JOptionPane.showInputDialog("ID");
-        
+
         try {
             long id = Long.parseLong(stringID);
-            for (Customer c : ((CustomersTableModel)customerTable.getModel()).getCustomers())
-                if (c.getID() == id)
-                {
+            for (Customer c : ((CustomersTableModel) customerTable.getModel()).getCustomers()) {
+                if (c.getID() == id) {
                     new CustomerSwingWorker(CustomersActions.REMOVE_CUSTOMER, c).execute();
                     return;
                 }
-        }
-        catch (NumberFormatException ex)
-        {
+            }
+        } catch (NumberFormatException ex) {
             JOptionPane.showConfirmDialog(jMenu1,
                     ("ID " + localization.getString("must_be_number")),
                     localization.getString("invalid_input"), JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
@@ -1839,23 +1788,25 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
 
     private void jMenuItem21ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem21ActionPerformed
         String stringID = JOptionPane.showInputDialog("ID");
-        
+
         try {
             long id = Long.parseLong(stringID);
-            for (Rent r : ((RentsTableModel)rentTable.getModel()).getRents())
-                if (r.getID() == id)
-                {
+            for (Rent r : ((RentsTableModel) rentTable.getModel()).getRents()) {
+                if (r.getID() == id) {
                     new RentalSwingWorker(RentsActions.REMOVE_RENT, r).execute();
                     return;
                 }
-        }
-        catch (NumberFormatException ex)
-        {
+            }
+        } catch (NumberFormatException ex) {
             JOptionPane.showConfirmDialog(jMenu1,
                     ("ID " + localization.getString("must_be_number")),
                     localization.getString("invalid_input"), JOptionPane.OK_OPTION, JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jMenuItem21ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1966,8 +1917,7 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
 
         ADD_RENT, REMOVE_RENT, EDIT_RENT, GET_CUSTOMER_CARS, GET_CUSTOMER_WITH_CAR, GET_ALL_RENTS, SEARCH_RENTS
     };
-    
-    private ResourceBundle localization = ResourceBundle.getBundle("cz.muni.fi.pv168.localization", new Locale("ru", "RU"));
+    private ResourceBundle localization = ResourceBundle.getBundle("cz.muni.fi.pv168.localization");
     private DataSource dataSource = null;
     private CarManager carManager = new CarManagerImplementation();
     private CustomerManager customerManager = new CustomerManagerImplementation();

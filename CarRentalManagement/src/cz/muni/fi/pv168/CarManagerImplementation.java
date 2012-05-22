@@ -1,6 +1,5 @@
 package cz.muni.fi.pv168;
 
-import java.awt.Color;
 import java.io.FileOutputStream;
 import java.sql.*;
 import java.util.ArrayList;
