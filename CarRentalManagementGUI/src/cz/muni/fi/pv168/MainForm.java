@@ -2,6 +2,8 @@ package cz.muni.fi.pv168;
 
 import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -679,6 +681,23 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         carManager.setLogger(fs);
         customerManager.setLogger(fs);
         rentManager.setLogger(fs);
+
+        final SortFilterModel sorter = new SortFilterModel(rentTable.getModel());
+        rentTable.getTableHeader().addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent event) {
+                // check for double click
+                if (event.getClickCount() < 2) {
+                    return;
+                }
+                // find column of click and
+                int tableColumn = rentTable.columnAtPoint(event.getPoint());
+                // translate to table model index and sort
+                int modelColumn = rentTable.convertColumnIndexToModel(tableColumn);
+                sorter.sort(modelColumn);
+            }
+        });
 
         jTabbedPane1.setTitleAt(0, localization.getString("cars"));
         jTabbedPane1.setTitleAt(1, localization.getString("customers"));
@@ -1565,7 +1584,7 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
 
                     Set<Car> toBeRemovedCars = new HashSet<>();
                     Set<Car> toBeUpdatedCars = new HashSet<>();
-                    
+
                     if (ctm.hasNewCars()) {
                         for (Car c : ctm.getCars()) {
                             if ((c.getID() == null) && (isValid(c))) {
