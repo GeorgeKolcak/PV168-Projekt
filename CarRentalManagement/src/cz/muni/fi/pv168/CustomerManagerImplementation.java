@@ -77,6 +77,7 @@ public class CustomerManagerImplementation implements CustomerManager {
             if (0 == statement.executeUpdate()) {
                 throw new IllegalArgumentException("Can't locate Customer in DB");
             }
+            logger.log(Level.INFO, ("Customer ID " + customer.getID() + " removed"));
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Error DELETE Customer from DB", ex);
             throw new TransactionException("Error DELETE Customer from DB", ex);
@@ -165,6 +166,7 @@ public class CustomerManagerImplementation implements CustomerManager {
             if (0 == statement.executeUpdate()) {
                 throw new TransactionException("Customer with given ID not exist");
             }
+            logger.log(Level.INFO, ("Customer ID " + customer.getID() + " updated"));
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Error when UPDATE Customer in DB", ex);
             throw new TransactionException("Error when UPDATE Customer in DB", ex);

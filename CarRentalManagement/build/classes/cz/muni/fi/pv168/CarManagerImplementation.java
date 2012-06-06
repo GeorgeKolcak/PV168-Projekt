@@ -81,7 +81,8 @@ public class CarManagerImplementation implements CarManager {
             if (0 == statement.executeUpdate()) {
                 throw new TransactionException("Given Car does not exist in DB" + car);
             }
-
+            
+            logger.log(Level.INFO, ("Car ID " + car.getID() + " removed"));
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Error when DELETE Car from DB", ex);
             throw new TransactionException("Error when DELETE Car from DB", ex);
@@ -150,6 +151,7 @@ public class CarManagerImplementation implements CarManager {
             if (0 == statement.executeUpdate()) {
                 throw new TransactionException("Error UPDATE Car from DB with ID " + car.getID());
             }
+            logger.log(Level.INFO, ("Car ID " + car.getID() + " updated"));
         } catch (SQLException ex) {
             logger.log(Level.SEVERE, "Error UPDATE Car from DB with ID " + car.getID(), ex);
             throw new TransactionException("Error UPDATE Car from DB with ID " + car.getID(), ex);

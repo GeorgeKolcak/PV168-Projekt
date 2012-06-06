@@ -728,10 +728,8 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         jButton3.setAction(new AddCustomerAction(localization.getString("new_customer")));
         jButton4.setAction(new AddRentAction(localization.getString("new_rent")));
 
-        jMenuItem4.setAction(new SortAction(localization.getString("sort")));
         jMenuItem5.setText(localization.getString("find"));
 
-        jButton8.setAction(new SortAction(localization.getString("sort")));
         jButton9.setText(localization.getString("search"));
 
         jMenu6.setText(localization.getString("remove"));
@@ -776,7 +774,6 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         jSeparator2 = new javax.swing.JToolBar.Separator();
         jTextField2 = new javax.swing.JTextField();
         jButton9 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jToolBar1 = new javax.swing.JToolBar();
         jMenuBar1 = new javax.swing.JMenuBar();
@@ -799,7 +796,6 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         jMenuItem24 = new javax.swing.JMenuItem();
         jMenuItem25 = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem4 = new javax.swing.JMenuItem();
         jMenuItem5 = new javax.swing.JMenuItem();
         jMenu4 = new javax.swing.JMenu();
         jMenuItem9 = new javax.swing.JMenuItem();
@@ -1103,13 +1099,6 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         });
         mainToolBar.add(jButton9);
 
-        jButton8.setText("Sort");
-        jButton8.setFocusable(false);
-        jButton8.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton8.setName("");
-        jButton8.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        mainToolBar.add(jButton8);
-
         mainToolBar.setBounds(0, 0, 985, 25);
         jDesktopPane1.add(mainToolBar, javax.swing.JLayeredPane.PALETTE_LAYER);
 
@@ -1213,10 +1202,6 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
         jMenuItem25.setText("jMenuItem25");
         jMenu2.add(jMenuItem25);
         jMenu2.add(jSeparator4);
-
-        jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem4.setText("Sort");
-        jMenu2.add(jMenuItem4);
 
         jMenuItem5.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem5.setText("Find");
@@ -1873,7 +1858,6 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JMenu jMenu1;
@@ -1895,7 +1879,6 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
     private javax.swing.JMenuItem jMenuItem24;
     private javax.swing.JMenuItem jMenuItem25;
     private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItem6;
     private javax.swing.JMenuItem jMenuItem7;
