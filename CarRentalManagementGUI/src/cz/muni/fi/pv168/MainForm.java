@@ -1632,7 +1632,7 @@ public class MainForm extends javax.swing.JFrame implements ClipboardOwner {
 
                     if (!toBeRemovedCustomers.isEmpty()) {
                         if (JOptionPane.showConfirmDialog(jMenu1, localization.getString("customers_being_deleted"),
-                                localization.getString("customer_info_missing"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                                localization.getString("customer_information_missing"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                             for (Customer c : toBeRemovedCustomers) {
                                 new CustomerSwingWorker(CustomersActions.REMOVE_CUSTOMER, c).execute();
                                 ctm.customerResolved(c);

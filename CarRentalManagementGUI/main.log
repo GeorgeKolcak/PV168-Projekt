@@ -54,3 +54,13 @@ Caused by: java.net.ConnectException: Connection refused: connect
 
 Jun 05, 2012 9:10:22 AM cz.muni.fi.pv168.CustomerManagerImplementation addCustomer
 INFO: New Customer ID 3 added
+Jun 07, 2012 8:35:51 AM cz.muni.fi.pv168.CustomerManagerImplementation removeCustomer
+INFO: Customer ID 3 removed
+Jun 07, 2012 8:36:23 AM cz.muni.fi.pv168.CustomerManagerImplementation updateCustomerInfo
+INFO: Customer ID 1 updated
+Jun 07, 2012 8:36:51 AM cz.muni.fi.pv168.CustomerManagerImplementation updateCustomerInfo
+INFO: Customer ID 1 updated
+Jun 07, 2012 8:39:49 AM cz.muni.fi.pv168.CustomerManagerImplementation addCustomer
+INFO: New Customer ID 4 added
+Jun 07, 2012 8:41:54 AM cz.muni.fi.pv168.CustomerManagerImplementation removeCustomer
+INFO: Customer ID 4 removed
